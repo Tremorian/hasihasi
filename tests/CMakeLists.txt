@@ -11,6 +11,7 @@ add_executable(unit_tests
   test_server.cpp
   test_client.cpp
   test_jitter_buffer.cpp
+  test_positonal_audio.cpp
 )
 
 target_link_libraries(unit_tests

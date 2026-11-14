@@ -8,6 +8,7 @@ add_library(hh_audio
   src/fec_plc.cpp
   src/vad.cpp
   src/noise_suppression.cpp
+  src/positional_audio.cpp
 )
 
 add_library(hh_audio::hh_audio ALIAS hh_audio)

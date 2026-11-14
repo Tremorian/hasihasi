@@ -7,6 +7,7 @@ add_executable(hasihasi-server
   voice_router.cpp
   channel.cpp
   user.cpp
+  session_manager.cpp
 )
 
 target_include_directories(hasihasi-server
