@@ -33,9 +33,15 @@ option(HASIHASI_BUILD_SERVER   "Baut den hasihasi-Server"   ON)
 option(HASIHASI_BUILD_CLIENT  "Baut den Qt6-Client"        ON)
 option(HASIHASI_BUILD_TOOLS   "Baut hasihasi-cli"          ON)
 option(HASIHASI_BUILD_TESTS   "Baut Tests"                 ON)
+option(HASIHASI_BUILD_TRANSLATIONS "Baut Translation-Files" ON)
 
 # ── Abhängigkeiten (systemweit) ───────────────────────────────────────
 find_package(Threads REQUIRED)
+
+# ── Translation-Files (Qt Linguist) ─────────────────────────────────
+if(HASIHASI_BUILD_TRANSLATIONS)
+  include(cmake/translations.cmake)
+endif()
 
 # ── Unterverzeichnisse ────────────────────────────────────────────────
 add_subdirectory(libs/hh_common)
