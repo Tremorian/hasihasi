@@ -9,6 +9,7 @@ add_library(hh_server_lib
   voice_crypto.cpp
   cert_auth.cpp
   prometheus_metrics.cpp
+  admin_server.cpp
   channel.cpp
   user.cpp
   session_manager.cpp

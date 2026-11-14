@@ -25,6 +25,7 @@ add_executable(unit_tests
   test_voice_crypto.cpp
   test_cert_auth.cpp
   test_prometheus_metrics.cpp
+  test_admin_server.cpp
 )
 
 target_link_libraries(unit_tests
