@@ -10,6 +10,7 @@ add_library(hh_server_lib
   cert_auth.cpp
   prometheus_metrics.cpp
   admin_server.cpp
+  rate_limiter.cpp
   channel.cpp
   user.cpp
   session_manager.cpp

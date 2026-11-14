@@ -26,6 +26,7 @@ add_executable(unit_tests
   test_cert_auth.cpp
   test_prometheus_metrics.cpp
   test_admin_server.cpp
+  test_rate_limiter.cpp
 )
 
 target_link_libraries(unit_tests
