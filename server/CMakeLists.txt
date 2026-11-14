@@ -28,6 +28,7 @@ add_library(hh_server_lib
   cluster_health.cpp
   websocket_server.cpp
   bot_manager.cpp
+  discord_integration.cpp
 )
 
 target_include_directories(hh_server_lib
