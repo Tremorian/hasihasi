@@ -7,6 +7,7 @@ find_package(SQLite3 REQUIRED)
 add_library(hh_server_lib
   voice_router.cpp
   voice_crypto.cpp
+  cert_auth.cpp
   channel.cpp
   user.cpp
   session_manager.cpp
