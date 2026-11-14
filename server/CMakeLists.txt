@@ -30,6 +30,7 @@ add_library(hh_server_lib
   bot_manager.cpp
   discord_integration.cpp
   performance_optimizer.cpp
+  security_hardening.cpp
 )
 
 target_include_directories(hh_server_lib
