@@ -8,6 +8,7 @@ add_executable(hasihasi-server
   channel.cpp
   user.cpp
   session_manager.cpp
+  acl.cpp
 )
 
 target_include_directories(hasihasi-server

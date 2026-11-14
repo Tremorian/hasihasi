@@ -6,6 +6,7 @@
 #include "server/channel.hpp"
 #include "server/user.hpp"
 #include "server/voice_router.hpp"
+#include "server/acl.hpp"
 
 #include <asio.hpp>
 #include <cstdint>
@@ -96,6 +97,14 @@ public:
   // Voice-Weiterleitung (vereinfacht)
   void route_voice(uint32_t from_user_id, std::span<const uint8_t> voice_data);
 
+  // ACL-Verwaltung
+  std::shared_ptr<AclGroup> create_acl_group(const std::string& name, bool inherits = false);
+  bool delete_acl_group(uint32_t group_id);
+  std::shared_ptr<AclGroup> find_acl_group(uint32_t group_id) const;
+  bool check_user_right(uint32_t user_id, uint32_t channel_id, ChannelRight right) const;
+  void set_user_admin(uint32_t user_id, bool admin);
+  bool is_user_admin(uint32_t user_id) const;
+
   // Statistik
   size_t user_count() const { return user_manager_.user_count(); }
   size_t channel_count() const { return multi_channel_.all_channels().size(); }
@@ -108,6 +117,7 @@ private:
   MultiChannelManager multi_channel_;
   UserManager user_manager_;
   VoiceRouter voice_router_;
+  AclManager acl_manager_;
   MessageHandler message_handler_;
 };
 

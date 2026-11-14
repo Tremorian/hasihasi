@@ -171,4 +171,30 @@ size_t ServerSessionManager::active_speakers() const {
   return 0;
 }
 
+// ── ACL-Verwaltung ────────────────────────────────────────────────────
+
+std::shared_ptr<AclGroup> ServerSessionManager::create_acl_group(const std::string& name, bool inherits) {
+  return acl_manager_.create_group(name, inherits);
+}
+
+bool ServerSessionManager::delete_acl_group(uint32_t group_id) {
+  return acl_manager_.delete_group(group_id);
+}
+
+std::shared_ptr<AclGroup> ServerSessionManager::find_acl_group(uint32_t group_id) const {
+  return acl_manager_.find_group(group_id);
+}
+
+bool ServerSessionManager::check_user_right(uint32_t user_id, uint32_t channel_id, ChannelRight right) const {
+  return acl_manager_.check_right(user_id, channel_id, right);
+}
+
+void ServerSessionManager::set_user_admin(uint32_t user_id, bool admin) {
+  acl_manager_.set_user_admin(user_id, admin);
+}
+
+bool ServerSessionManager::is_user_admin(uint32_t user_id) const {
+  return acl_manager_.is_admin(user_id);
+}
+
 } // namespace hh::server
