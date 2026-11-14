@@ -15,6 +15,7 @@ add_executable(unit_tests
   test_session.cpp
   test_voice_pipeline.cpp
   test_latency_test.cpp
+  test_reconnect_manager.cpp
 )
 
 target_link_libraries(unit_tests
