@@ -12,33 +12,60 @@
 namespace hh::audio {
 
 // Lock-free SPSC Ringpuffer für Audio-Frames
+// Single-Producer Single-Consumer, keine Locks, keine Allokationen nach Initialisierung
 template<typename T, size_t Capacity>
 class RingBuffer {
 public:
+  static_assert(Capacity > 0, "Capacity must be greater than 0");
+  static_assert((Capacity & (Capacity - 1)) == 0, "Capacity must be a power of 2");
+
   RingBuffer() = default;
 
   // RT-safe: keine Allokationen, keine Locks
   bool push(const T& item) {
     size_t write_pos = write_pos_.load(std::memory_order_relaxed);
-    size_t next = (write_pos + 1) % Capacity;
+    size_t next = (write_pos + 1) & (Capacity - 1);
     if (next == read_pos_.load(std::memory_order_acquire)) return false; // voll
     buffer_[write_pos] = item;
     write_pos_.store(next, std::memory_order_release);
     return true;
   }
 
+  // Bulk push (mehrere Items auf einmal)
+  size_t push_many(const T* items, size_t count) {
+    size_t pushed = 0;
+    while (pushed < count && push(items[pushed])) {
+      pushed++;
+    }
+    return pushed;
+  }
+
   bool pop(T& item) {
     size_t read_pos = read_pos_.load(std::memory_order_relaxed);
-    if (read_pos == write_pos_.load(std::memory_order_acquire)) return false; // leer
+    size_t write_pos = write_pos_.load(std::memory_order_acquire);
+    if (read_pos == write_pos) return false; // leer
     item = buffer_[read_pos];
-    read_pos_.store((read_pos + 1) % Capacity, std::memory_order_release);
+    read_pos_.store((read_pos + 1) & (Capacity - 1), std::memory_order_release);
     return true;
+  }
+
+  // Bulk pop (mehrere Items auf einmal)
+  size_t pop_many(T* items, size_t max_count) {
+    size_t popped = 0;
+    while (popped < max_count && pop(items[popped])) {
+      popped++;
+    }
+    return popped;
+  }
+
+  bool try_pop(T& item) {
+    return pop(item);
   }
 
   size_t size() const {
     size_t w = write_pos_.load(std::memory_order_acquire);
     size_t r = read_pos_.load(std::memory_order_acquire);
-    return (w >= r) ? (w - r) : (Capacity - r + w);
+    return (w - r) & (Capacity - 1);
   }
 
   bool empty() const {
@@ -47,6 +74,14 @@ public:
 
   bool full() const {
     return size() == Capacity - 1;
+  }
+
+  size_t capacity() const {
+    return Capacity - 1;
+  }
+
+  void clear() {
+    write_pos_.store(read_pos_.load(std::memory_order_acquire), std::memory_order_release);
   }
 
 private:
