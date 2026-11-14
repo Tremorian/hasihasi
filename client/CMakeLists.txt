@@ -27,6 +27,7 @@ add_library(client_core
   src/dsp_thread.cpp
   src/tc_netem_test.cpp
   src/image_manager.cpp
+  src/i18n_manager.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)
