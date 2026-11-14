@@ -25,6 +25,7 @@ add_library(hh_server_lib
   server_discovery.cpp
   load_balancer.cpp
   server_sync.cpp
+  cluster_health.cpp
 )
 
 target_include_directories(hh_server_lib
