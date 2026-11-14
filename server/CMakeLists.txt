@@ -22,6 +22,7 @@ add_library(hh_server_lib
   whisper_shout.cpp
   server_i18n.cpp
   server_cluster.cpp
+  server_discovery.cpp
 )
 
 target_include_directories(hh_server_lib
