@@ -38,6 +38,7 @@ add_executable(unit_tests
   test_markdown.cpp
   test_accessibility.cpp
   test_dsp_thread.cpp
+  test_tc_netem.cpp
 )
 
 target_link_libraries(unit_tests

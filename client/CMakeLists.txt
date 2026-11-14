@@ -25,6 +25,7 @@ add_library(client_core
   src/markdown_light.cpp
   src/accessibility.cpp
   src/dsp_thread.cpp
+  src/tc_netem_test.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)
