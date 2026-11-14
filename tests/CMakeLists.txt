@@ -9,6 +9,7 @@ add_executable(unit_tests
   test_ringbuffer.cpp
   test_loopback.cpp
   test_server.cpp
+  test_client.cpp
 )
 
 target_link_libraries(unit_tests
@@ -17,6 +18,7 @@ target_link_libraries(unit_tests
     hh_proto::hh_proto
     hh_audio::hh_audio
     hh_net::hh_net
+    client_core::client_core
 )
 
 target_compile_features(unit_tests PRIVATE cxx_std_20)

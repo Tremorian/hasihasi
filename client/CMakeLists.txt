@@ -5,6 +5,8 @@ find_package(Qt6 6.5 REQUIRED COMPONENTS Widgets)
 
 qt_standard_project_setup()
 
+# ── Client Core (ohne Qt) ─────────────────────────────────────────────
+
 add_library(client_core
   src/session.cpp
 )
@@ -30,15 +32,6 @@ target_compile_features(client_core PUBLIC cxx_std_20)
 add_executable(hasihasi
   ui/src/mainwindow.cpp
 )
-
-qt_add_executable(hasihasi_macos
-  ui/src/mainwindow.cpp
-)
-
-# Nur für Nicht-macOS: Widgets
-if(NOT APPLE)
-  target_sources(hasihasi PRIVATE ui/src/mainwindow.cpp)
-endif()
 
 target_link_libraries(hasihasi
   PRIVATE
