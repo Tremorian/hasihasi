@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="local.hasihasi.mobile"
+  android:versionCode="-- %%PACKAGE_VERSION%% --"
+  android:versionName="-- %%PACKAGE_NAME%% --">
+
+  <!-- permissions -->
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.RECORD_AUDIO" />
+  <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+  <uses-permission android:name="android.permission.BLUETOOTH" />
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+  <uses-feature android:name="android.hardware.audio.output" android:required="true" />
+  <uses-feature android:name="android.hardware.microphone" android:required="true" />
+  <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
+  <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
+
+  <application
+    android:name="QtApplication"
+    android:label="-- %%ANDROID_APP_NAME%% --"
+    android:icon="-- %%ANDROID_ICON%% --"
+    android:allowBackup="true"
+    android:fullBackupContent="true"
+    android:theme="@style/QtTheme">
+
+    <activity android:name="QtActivity"
+      android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
+      android:label="-- %%ANDROID_APP_NAME%% --"
+      android:exported="true"
+      android:launchMode="singleTask"
+      android:enabled="true">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_NAME%% --" />
+      <meta-data android:name="android.app.arguments" android:value="-- %%INSERT_ARGUMENTS%% --" />
+    </activity>
+
+    <!-- Push-Benachrichtigungen -->
+    <receiver android:name="com.google.firebase.messaging.FirebaseMessagingService"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+      </intent-filter>
+    </receiver>
+
+  </application>
+</manifest>

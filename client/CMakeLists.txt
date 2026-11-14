@@ -82,3 +82,11 @@ qt_add_resources(hasihasi "translations"
 install(TARGETS hasihasi
   RUNTIME DESTINATION bin
 )
+
+# ── Mobile-Client (Qt Quick) ─────────────────────────────────────────
+
+option(HASIHASI_BUILD_MOBILE "Build mobile client (Qt Quick)" OFF)
+
+if(HASIHASI_BUILD_MOBILE)
+  add_subdirectory(mobile)
+endif()

@@ -438,14 +438,14 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 **Ziel:** Vollständige Cross-Platform-Abdeckung mit Mobile-Client, erweiterte Kollaborations-Features (Datei-Share, Screenshare), Sprachsteuerung und professionelles Monitoring.
 
 #### 12.1 Mobile-Client (Qt Quick)
-- [ ] **Qt Quick/UWP**: Mobile-optimierte UI mit QML
-- [ ] **Android-Support**: Build für Android (API 29+)
-- [ ] **iOS-Support**: Build für iOS (optional, Apple Developer Account erforderlich)
-- [ ] **Touch-Optimierung**: Große Buttons, Gesten (Swipe, Pinch-to-Zoom)
+- [x] **Qt Quick/UWP**: Mobile-optimierte UI mit QML – `qml/Main.qml`, `qml/views/`, `qml/components/`
+- [x] **Android-Support**: Build für Android (API 29+) – `android/AndroidManifest.xml.in`, CMake-Config
+- [x] **iOS-Support**: Build für iOS (optional) – `ios/Info.plist.in`, CMake-Config
+- [x] **Touch-Optimierung**: Große Buttons, Gesten (Swipe, Pinch-to-Zoom) – `ServerDelegate.qml`, `ChannelDelegate.qml`
 - [ ] **Mobile-Audio**: Headset-Management, Background-Mode, Do-not-disturb
-- [ ] **Responsive Design**: Automatische Anpassung an Bildschirmgröße und -orientierung
+- [x] **Responsive Design**: Automatische Anpassung an Bildschirmgröße und -orientierung – `Main.qml` (scale, isLargeScreen)
 - [ ] **Offline-Mode**: Lokaler Cache für Nachrichten und Kanalstruktur
-- [ ] **Push-Benachrichtigungen**: Firebase Cloud Messaging (Android), APNs (iOS)
+- [x] **Push-Benachrichtigungen**: Firebase Cloud Messaging (Android), APNs (iOS) – `push_notification_manager.hpp/cpp`
 - [ ] **Batterie-Optimierung**: Adaptive Frame-Rate, Hintergrund-Audio nur bei Bedarf
 
 #### 12.2 Sprachassistent (Voice Commands)
