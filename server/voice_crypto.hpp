@@ -53,6 +53,11 @@ public:
   EncryptResult encrypt(std::span<const uint8_t> input, uint64_t sequence,
                         uint8_t session_id, uint8_t target);
 
+  // Verschlüsselung mit explizitem Nonce
+  EncryptResult encrypt_with_nonce(std::span<const uint8_t> input,
+                                   const std::array<uint8_t, NONCE_SIZE>& nonce,
+                                   uint8_t session_id, uint8_t target);
+
   // Entschlüsselung
   // input: verschlüsseltes Paket
   // output: entschlüsseltes Opus-Paket

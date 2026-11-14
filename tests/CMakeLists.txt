@@ -33,6 +33,7 @@ add_executable(unit_tests
   test_autostart.cpp
   test_theme.cpp
   test_hidpi.cpp
+  test_voice_router.cpp
 )
 
 target_link_libraries(unit_tests

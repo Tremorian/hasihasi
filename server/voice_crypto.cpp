@@ -133,6 +133,95 @@ struct VoiceCrypto::Impl {
     return result;
   }
 
+  VoiceCrypto::EncryptResult encrypt_with_nonce(std::span<const uint8_t> input,
+                                                 const std::array<uint8_t, NONCE_SIZE>& nonce,
+                                                 uint8_t session_id, uint8_t target) {
+    EncryptResult result{};
+
+    if (!initialized_) {
+      hh::get_logger().error("VoiceCrypto: Not initialized");
+      return result;
+    }
+
+    if (input.size() > VoiceCrypto::MAX_OPUS_SIZE) {
+      hh::get_logger().error("VoiceCrypto: Input too large: {} bytes", input.size());
+      return result;
+    }
+
+    // Paket aufbauen: [session_id][sequence][target][opus][tag]
+    std::vector<uint8_t> output(VoiceCrypto::MAX_PACKET_SIZE);
+    size_t offset = 0;
+
+    // Session ID (1 Byte)
+    output[offset++] = session_id;
+
+    // Nonce wird nicht im Paket gespeichert, da deterministisch aus Sequenz generiert
+
+    // Target (1 Byte)
+    output[offset++] = target;
+
+    // Opus Frame
+    std::memcpy(output.data() + offset, input.data(), input.size());
+    offset += input.size();
+
+    // AEAD-Verschlüsselung mit AES-256-GCM
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    if (!ctx) {
+      hh::get_logger().error("VoiceCrypto: Failed to create EVP context");
+      return result;
+    }
+
+    if (EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, nullptr, nullptr) != 1) {
+      hh::get_logger().error("VoiceCrypto: EVP_EncryptInit_ex failed");
+      EVP_CIPHER_CTX_free(ctx);
+      return result;
+    }
+
+    if (EVP_EncryptInit_ex(ctx, nullptr, nullptr, key_.data(), nonce.data()) != 1) {
+      hh::get_logger().error("VoiceCrypto: EVP_EncryptInit_ex key/nonce failed");
+      EVP_CIPHER_CTX_free(ctx);
+      return result;
+    }
+
+    // Input verschlüsseln
+    int len = 0;
+    int ciphertext_len = 0;
+    if (EVP_EncryptUpdate(ctx, output.data() + offset, &len, input.data(), input.size()) != 1) {
+      hh::get_logger().error("VoiceCrypto: EVP_EncryptUpdate failed");
+      EVP_CIPHER_CTX_free(ctx);
+      return result;
+    }
+    ciphertext_len = len;
+
+    // Final
+    if (EVP_EncryptFinal_ex(ctx, output.data() + offset + ciphertext_len, &len) != 1) {
+      hh::get_logger().error("VoiceCrypto: EVP_EncryptFinal_ex failed");
+      EVP_CIPHER_CTX_free(ctx);
+      return result;
+    }
+    ciphertext_len += len;
+
+    // Tag holen
+    std::array<uint8_t, VoiceCrypto::TAG_SIZE> tag{};
+    if (EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, VoiceCrypto::TAG_SIZE, tag.data()) != 1) {
+      hh::get_logger().error("VoiceCrypto: EVP_CTRL_GCM_GET_TAG failed");
+      EVP_CIPHER_CTX_free(ctx);
+      return result;
+    }
+
+    // Tag anhängen
+    std::memcpy(output.data() + offset + ciphertext_len, tag.data(), VoiceCrypto::TAG_SIZE);
+    offset += ciphertext_len + VoiceCrypto::TAG_SIZE;
+
+    EVP_CIPHER_CTX_free(ctx);
+
+    result.success = true;
+    result.output_size = offset;
+    result.sequence = 0; // Wird nicht verwendet bei explizitem Nonce
+
+    return result;
+  }
+
   VoiceCrypto::DecryptResult decrypt(std::span<const uint8_t> input) {
     DecryptResult result{};
 
@@ -248,6 +337,15 @@ VoiceCrypto::EncryptResult VoiceCrypto::encrypt(std::span<const uint8_t> input, 
     return {};
   }
   return impl_->encrypt(input, sequence, session_id, target);
+}
+
+VoiceCrypto::EncryptResult VoiceCrypto::encrypt_with_nonce(std::span<const uint8_t> input,
+                                                            const std::array<uint8_t, NONCE_SIZE>& nonce,
+                                                            uint8_t session_id, uint8_t target) {
+  if (!impl_) {
+    return {};
+  }
+  return impl_->encrypt_with_nonce(input, nonce, session_id, target);
 }
 
 VoiceCrypto::DecryptResult VoiceCrypto::decrypt(std::span<const uint8_t> input) {

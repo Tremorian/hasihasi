@@ -8,12 +8,16 @@
 #include <asio.hpp>
 #include <asio/ts/buffer.hpp>
 #include <asio/ts/internet.hpp>
+#include <asio/ts/socket.hpp>
 #include <cstdint>
 #include <memory>
 #include <span>
 #include <string>
 #include <vector>
 #include <queue>
+#include <deque>
+#include <mutex>
+#include <condition_variable>
 
 namespace hh::server {
 
@@ -27,9 +31,15 @@ public:
   // UDP-Socket öffnen (Voice-Port)
   bool open(uint16_t port);
 
+  // TCP-Fallback-Socket öffnen
+  bool open_tcp_fallback(uint16_t port);
+
   // Verschlüsselung initialisieren
   bool initialize_crypto(const std::array<uint8_t, VoiceCrypto::KEY_SIZE>& key);
   void set_crypto_config(const VoiceCrypto::Config& config);
+  
+  // Nonce aus Sequenznummer (deterministisch)
+  static std::array<uint8_t, VoiceCrypto::NONCE_SIZE> generate_nonce_deterministic(uint64_t sequence, uint8_t session_id);
 
   // Voice-Paket an Ziel weiterleiten (verschlüsselt)
   // target_endpoint: Ziel-UDP-Endpoint
@@ -52,6 +62,10 @@ public:
 
   // Remote-Adresse des Sockets
   asio::ip::udp::endpoint local_endpoint() const { return socket_.local_endpoint(); }
+  
+  // TCP-Fallback-Status
+  bool is_tcp_fallback_active() const { return tcp_fallback_active_; }
+  void set_tcp_fallback_active(bool active) { tcp_fallback_active_ = active; }
 
   // Statistik
   struct Stats {
@@ -109,6 +123,12 @@ private:
   asio::ip::udp::socket socket_;
   std::unique_ptr<BufferPool> buffer_pool_;
   std::unique_ptr<VoiceCrypto> crypto_;
+  
+  // TCP-Fallback
+  asio::ip::tcp::acceptor tcp_acceptor_;
+  bool tcp_fallback_active_ = false;
+  std::deque<std::pair<asio::ip::tcp::socket*, std::vector<uint8_t>>> tcp_pending_packets_;
+  std::mutex tcp_mutex_;
 
   Stats stats_;
   VoicePacketHandler voice_packet_handler_;

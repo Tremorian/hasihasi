@@ -61,6 +61,58 @@ bool VoiceRouter::initialize_crypto(const std::array<uint8_t, VoiceCrypto::KEY_S
   return true;
 }
 
+bool VoiceRouter::open_tcp_fallback(uint16_t port) {
+  std::error_code ec;
+  
+  // TCP-Acceptor öffnen
+  tcp_acceptor_.open(asio::ip::tcp::v4(), ec);
+  if (ec) {
+    hh::get_logger().error("Failed to open TCP fallback socket: {}", ec.message());
+    return false;
+  }
+
+  // Port wiederverwenden
+  tcp_acceptor_.set_option(asio::socket_base::reuse_address(true), ec);
+  if (ec) {
+    hh::get_logger().warn("Failed to set TCP reuse_address: {}", ec.message());
+  }
+
+  // Binden
+  asio::ip::tcp::endpoint bind_endpoint(asio::ip::tcp::v4(), port);
+  tcp_acceptor_.bind(bind_endpoint, ec);
+  if (ec) {
+    hh::get_logger().error("Failed to bind TCP fallback socket to port {}: {}", port, ec.message());
+    return false;
+  }
+
+  // Hören
+  tcp_acceptor_.listen(asio::socket_base::max_listen_connections, ec);
+  if (ec) {
+    hh::get_logger().error("Failed to listen on TCP fallback socket: {}", ec.message());
+    return false;
+  }
+
+  tcp_fallback_active_ = true;
+  hh::get_logger().info("TCP fallback socket bound to port {}", port);
+  return true;
+}
+
+std::array<uint8_t, VoiceCrypto::NONCE_SIZE> VoiceRouter::generate_nonce_deterministic(
+    uint64_t sequence, uint8_t session_id) {
+  std::array<uint8_t, VoiceCrypto::NONCE_SIZE> nonce = {};
+  
+  // Nonce aus Sequenznummer und Session-ID generieren (deterministisch)
+  // Struktur: [session_id (1B)][sequence (7B)]
+  nonce[0] = session_id;
+  
+  // Sequenznummer in 7 Bytes umwandeln (Big-Endian)
+  for (int i = 0; i < 7; ++i) {
+    nonce[1 + i] = static_cast<uint8_t>((sequence >> (56 - i * 8)) & 0xFF);
+  }
+  
+  return nonce;
+}
+
 void VoiceRouter::set_crypto_config(const VoiceCrypto::Config& config) {
   if (crypto_) {
     crypto_->set_config(config);
@@ -76,13 +128,14 @@ void VoiceRouter::route_to(const asio::ip::udp::endpoint& target_endpoint,
     return;
   }
 
-  // Zufällige Sequenznummer generieren (nicht zu klein, nicht zu groß)
-  static thread_local std::mt19937_64 rng(std::random_device{}());
-  static thread_local std::uniform_int_distribution<uint64_t> dist(1000, 0xFFFFFFFFFFFFFFF);
-  uint64_t sequence = dist(rng);
+  // Deterministische Sequenznummer basierend auf Zeit und Session
+  static thread_local uint64_t sequence_counter = 0;
+  sequence_counter++;
+  uint64_t sequence = sequence_counter;
 
-  // Verschlüsseln
-  auto result = crypto_->encrypt(data, sequence, session_id, target);
+  // Verschlüsseln mit deterministischem Nonce
+  auto nonce = generate_nonce_deterministic(sequence, session_id);
+  auto result = crypto_->encrypt_with_nonce(data, nonce, session_id, target);
   if (!result.success) {
     hh::get_logger().error("Voice encryption failed");
     return;
