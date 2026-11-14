@@ -201,6 +201,9 @@ private:
   // Voice-Pipeline
   std::shared_ptr<hh::client::VoicePipeline> voice_pipeline_;
 
+  // I18nManager
+  std::shared_ptr<hh::client::I18nManager> i18n_manager_;
+
   // Latenz-Monitor
   std::vector<double> latency_samples_;
   double avg_latency_ = 0.0;

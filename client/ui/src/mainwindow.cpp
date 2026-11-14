@@ -4,6 +4,8 @@
 #include "hh/client/ui/mainwindow.hpp"
 
 #include "hh/logging.hpp"
+#include "hh/client/i18n_manager.hpp"
+#include "hh/client/ui/languagedialog.hpp"
 
 #include <QDialog>
 #include <QInputDialog>
@@ -27,6 +29,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDateTime>
+#include <QTranslator>
 
 namespace hh::client::ui {
 
@@ -185,6 +188,10 @@ Qt::ItemFlags ChannelTreeModel::flags(const QModelIndex& index) const {
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent) {
+  // I18nManager initialisieren
+  i18n_manager_ = std::make_shared<hh::client::I18nManager>(this);
+  i18n_manager_->set_translation_directory(":/translations");
+  
   setup_ui();
   apply_amber_theme();
   load_settings();
@@ -237,6 +244,51 @@ void MainWindow::setup_menu_bar() {
   auto* settings_action = new QAction("&Einstellungen", this);
   connect(settings_action, &QAction::triggered, this, &MainWindow::on_settings_clicked);
   view_menu->addAction(settings_action);
+
+  // Sprache-Menü
+  auto* language_menu = menu->addMenu("&Sprache");
+
+  auto* german_action = new QAction("Deutsch", this);
+  connect(german_action, &QAction::triggered, [this]() {
+    if (i18n_manager_) {
+      i18n_manager_->set_language(hh::client::I18nManager::Language::German);
+    }
+  });
+  language_menu->addAction(german_action);
+
+  auto* english_action = new QAction("English", this);
+  connect(english_action, &QAction::triggered, [this]() {
+    if (i18n_manager_) {
+      i18n_manager_->set_language(hh::client::I18nManager::Language::English);
+    }
+  });
+  language_menu->addAction(english_action);
+
+  auto* french_action = new QAction("Français", this);
+  connect(french_action, &QAction::triggered, [this]() {
+    if (i18n_manager_) {
+      i18n_manager_->set_language(hh::client::I18nManager::Language::French);
+    }
+  });
+  language_menu->addAction(french_action);
+
+  auto* spanish_action = new QAction("Español", this);
+  connect(spanish_action, &QAction::triggered, [this]() {
+    if (i18n_manager_) {
+      i18n_manager_->set_language(hh::client::I18nManager::Language::Spanish);
+    }
+  });
+  language_menu->addAction(spanish_action);
+
+  language_menu->addSeparator();
+
+  auto* language_dialog_action = new QAction("&Spracheinstellungen...", this);
+  connect(language_dialog_action, &QAction::triggered, [this]() {
+    LanguageDialog* lang_dialog = new LanguageDialog(this);
+    lang_dialog->exec();
+    delete lang_dialog;
+  });
+  language_menu->addAction(language_dialog_action);
 
   // Hilfe-Menü
   auto* help_menu = menu->addMenu("&Hilfe");
