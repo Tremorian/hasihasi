@@ -257,6 +257,7 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 | M8 | Overlay, Positional Audio, Whisper-Ziele, Echo-Cancellation | |
 | M9 | Voice-Routing, Auth-Flow, Prometheus, Admin-CLI, D-Bus, Autostart, Theme, HiDPI, tc netem, RNNoise-Dep, Lock-free Buffers, Packaging-Tests, Lizenz/Reuse | Echter Zwei-Client-Test mit verschlüsselter Voice-Übertragung |
 | M10 | Reconnect-Manager, Positional Audio, Zwei-Client-Echt-Test, Lock-free SPSC Ringpuffer, Markdown light, Barrierefreiheit, DSP-Thread, tc netem-Test, Time-Stretching, RNNoise-Submodule, Paket-Builds, Debug-Symbole, Remote-Bilder blockieren | Vollständige Client/Server-Fertigstellung mit allen Features |
+| M11 | Server-Cluster, WebSocket-Support, Mobile-Client (Qt Quick), Sprachassistent, Integration (Discord/Teams), Performance-Optimierung, Security-Hardening | Multi-Server-Betrieb, Cross-Platform, Third-Party-Integration |
 
 ---
 
@@ -349,6 +350,53 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Debug-Symbole mitbauen**: RelWithDebInfo Standard
 - [x] **Flatpak-Config**: Debug-Symbole aktiviert
 - [x] **--version Flag**: Server mit Author/Lizenz/Link
+
+---
+
+### M11 – Detail-Spezifikation
+
+**Ziel:** Multi-Server-Betrieb, Cross-Platform, Third-Party-Integration.
+
+#### 11.1 Server-Cluster & Skalierung
+- [ ] **Multi-Server-Support**: Clients können mehrere Server verwalten
+- [ ] **Server-Discovery**: mDNS/Bonjour für lokale Server
+- [ ] **Load-Balancing**: Automatische Verteilung auf mehrere Server
+- [ ] **Server-Sync**: Benutzer/Channels zwischen Servern synchronisieren
+- [ ] **Cluster-Health**: Monitoring für Server-Cluster
+
+#### 11.2 WebSocket-Support
+- [ ] **WebSocket-Server**: Zusätzlicher Zugang zum Server über WebSockets
+- [ ] **Web-Client**: Browser-basierter Client (HTML5/WebAudio)
+- [ ] **Bot-API**: Automatisierung über WebSocket
+- [ ] **Event-Stream**: Echtzeit-Benachrichtigungen für Web-Clients
+
+#### 11.3 Mobile-Client (Qt Quick)
+- [ ] **Qt Quick/UWP**: Mobile-optimierte UI
+- [ ] **Android-Support**: Build für Android
+- [ ] **iOS-Support**: Build für iOS (optional)
+- [ ] **Touch-Optimierung**: Große Buttons, Gesten
+- [ ] **Mobile-Audio**: Headset-Management, Background-Mode
+
+#### 11.4 Sprachassistent & Integration
+- [ ] **Voice-Commands**: Sprachsteuerung (Stumm schalten, Kanal wechseln)
+- [ ] **Discord-Integration**: Discord-Bot für HasiHasi
+- [ ] **Teams-Integration**: Microsoft Teams Plugin
+- [ ] **Slack-Integration**: Slack-Bot für Textnachrichten
+- [ ] **IFTTT/Zapier**: Automatisierung
+
+#### 11.5 Performance-Optimierung
+- [ ] **SIMD-Optimierung**: AVX2/NEON für Audio-Processing
+- [ ] **Multi-Threading**: Mehrere DSP-Threads
+- [ ] **Memory-Pooling**: Heap-Allokationen minimieren
+- [ ] **Zero-Copy**: Zwischen Audio-Threads
+- [ ] **Benchmark-Suite**: Regelmäßige Performance-Tests
+
+#### 11.6 Security-Hardening
+- [ ] **Fuzzing**: Atheris/OSS-Fuzz für Protobuf-Parsing
+- [ ] **Static Analysis**: Clang-Tidy Strict Mode
+- [ ] **Penetration-Testing**: Regelmäßige Security-Reviews
+- [ ] **Security Advisories**: GitHub Security Advisories
+- [ ] **Encryption-Update**: Post-Quantum-Kryptografie (optional)
 
 ---
 
