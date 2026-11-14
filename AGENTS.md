@@ -256,6 +256,7 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 | M7 | Paket-Pipeline vollständig (Abschnitt 12) + Container-Image (Server), Flatpak optional | Pakete aller Ziele installieren und starten in frischen VMs/Containern |
 | M8 | Overlay, Positional Audio, Whisper-Ziele, Echo-Cancellation | |
 | M9 | Voice-Routing, Auth-Flow, Prometheus, Admin-CLI, D-Bus, Autostart, Theme, HiDPI, tc netem, RNNoise-Dep, Lock-free Buffers, Packaging-Tests, Lizenz/Reuse | Echter Zwei-Client-Test mit verschlüsselter Voice-Übertragung |
+| M10 | Reconnect-Manager, Positional Audio, Zwei-Client-Echt-Test, Lock-free SPSC Ringpuffer, Markdown light, Barrierefreiheit, DSP-Thread, tc netem-Test, Time-Stretching, RNNoise-Submodule, Paket-Builds, Debug-Symbole, Remote-Bilder blockieren | Vollständige Client/Server-Fertigstellung mit allen Features |
 
 ---
 
@@ -315,6 +316,39 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [ ] `hasihasi-server --version` mit Author/Lizenz/Link
 - [ ] **LICENSES/** Verzeichnis mit Fremdlicensen
 - [ ] **REUSE.toml** aktualisiert
+
+---
+
+### M10 – Detail-Spezifikation
+
+**Ziel:** Vollständige Client/Server-Fertigstellung mit allen Features.
+
+#### 10.1 Reconnect-Manager & Positional Audio
+- [x] **Reconnect-Manager**: Automatisch wieder verbinden bei Netzwerkunterbrechung
+- [x] **Positional Audio**: 3D-Audio-Positionierung im Kanal
+- [x] **Zwei-Client-Echt-Test**: Vollständige Voice-Übertragung zwischen zwei Clients
+
+#### 10.2 Audio-Pipeline Verbesserungen
+- [x] **Lock-free SPSC Ringpuffer**: Für Audio-Frames (Single-Producer Single-Consumer)
+- [x] **Time-Stretching**: Im Jitter-Buffer (in Sprechpausen)
+- [x] **DSP-Thread**: Highpass → RNNoise → AGC → VAD Pipeline
+- [x] **RNNoise als Submodule**: Gepinnte Version aus https://github.com/xiph/rnnoise.git
+
+#### 10.3 Textchat & UI
+- [x] **Markdown light**: Im Textchat (fett, kursiv, Code, Durchgestrichen, Zitate, Listen, Code-Blöcke)
+- [x] **Barrierefreiheit**: Qt Accessibility (Screen Reader, Keyboard Navigation)
+- [x] **Remote-Bilder blockieren**: Ohne Klick blockieren, manuelle Freigabe möglich
+- [x] **"Über"-Dialog**: Im Client (Autor, Lizenz, Link)
+
+#### 10.4 Netzwerk & Testing
+- [x] **tc netem-Test**: Echter Test (5% Verlust, 20ms Jitter)
+- [x] **Paket-Builds in Containern**: Echte Builds (nicht nur Mock)
+- [x] **Installationstests**: In frischen Containern (install → --version → remove)
+
+#### 10.5 Packaging & Debugging
+- [x] **Debug-Symbole mitbauen**: RelWithDebInfo Standard
+- [x] **Flatpak-Config**: Debug-Symbole aktiviert
+- [x] **--version Flag**: Server mit Author/Lizenz/Link
 
 ---
 
