@@ -41,6 +41,7 @@ add_executable(unit_tests
   test_dsp_thread.cpp
   test_tc_netem.cpp
   test_image_manager.cpp
+  test_i18n_manager.cpp
 )
 
 target_link_libraries(unit_tests
