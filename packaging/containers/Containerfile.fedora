@@ -1,8 +1,8 @@
-# HasiHasi – Build-Container für Fedora (aktuelle Version)
+# HasiHasi – Build-Container für Fedora (latest)
 # SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM fedora:40
+FROM fedora:latest
 
 RUN dnf install -y \
     gcc gcc-c++ cmake ninja-build git \

@@ -1,8 +1,8 @@
-# HasiHasi – Build-Container für Ubuntu 24.04 (Noble)
+# HasiHasi – Build-Container für Ubuntu (latest)
 # SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM ubuntu:24.04
+FROM ubuntu:latest
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential cmake ninja-build git \
