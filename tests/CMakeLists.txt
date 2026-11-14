@@ -29,6 +29,7 @@ add_executable(unit_tests
   test_rate_limiter.cpp
   test_welcome_message.cpp
   test_logging.cpp
+  test_dbus.cpp
 )
 
 target_link_libraries(unit_tests

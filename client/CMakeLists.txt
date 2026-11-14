@@ -18,6 +18,7 @@ add_library(client_core
   src/echo_cancellation.cpp
   src/game_overlay.cpp
   src/positional_audio_plugin.cpp
+  src/dbus_interface.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)
@@ -32,6 +33,7 @@ target_link_libraries(client_core
   PUBLIC
     hh_common::hh_common
     hh_net::hh_net
+    Qt6::DBus
 )
 
 target_compile_features(client_core PUBLIC cxx_std_20)
