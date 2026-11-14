@@ -55,6 +55,23 @@ public:
   // Adaptive Steuerung
   void update_network_stats(double avg_jitter_ms, double loss_rate);
 
+  // Time-Stretching für Sprechpausen
+  // Dehnt Audio zeitlich aus, um Lücken zu füllen
+  void enable_time_stretching(bool enabled);
+  bool is_time_stretching_enabled() const { return time_stretching_enabled_; }
+  
+  // Time-Stretching-Parameter
+  void set_stretch_factor(float factor);
+  float get_stretch_factor() const { return stretch_factor_; }
+  
+  // Silence Insertion (Ersatz für verlorene Pakete)
+  void enable_silence_insertion(bool enabled);
+  bool is_silence_insertion_enabled() const { return silence_insertion_enabled_; }
+  
+  // PLC (Packet Loss Concealment) aktivieren
+  void enable_plc(bool enabled);
+  bool is_plc_enabled() const { return plc_enabled_; }
+
 private:
   struct Packet {
     uint16_t sequence_number;
@@ -82,6 +99,16 @@ private:
 
   int consecutive_losses_ = 0;
   int expansion_count_ = 0;
+
+  // Time-Stretching
+  bool time_stretching_enabled_ = false;
+  float stretch_factor_ = 1.0f; // 1.0 = keine Dehnung
+  
+  // Silence Insertion
+  bool silence_insertion_enabled_ = true;
+  
+  // PLC (Packet Loss Concealment)
+  bool plc_enabled_ = true;
 
   std::mutex mutex_;
 };

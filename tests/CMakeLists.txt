@@ -11,6 +11,7 @@ add_executable(unit_tests
   test_server.cpp
   test_client.cpp
   test_jitter_buffer.cpp
+  test_jitter_buffer_time_stretch.cpp
   test_positonal_audio.cpp
   test_session.cpp
   test_voice_pipeline.cpp

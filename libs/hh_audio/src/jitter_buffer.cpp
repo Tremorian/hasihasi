@@ -159,4 +159,24 @@ void JitterBuffer::detect_loss() {
   }
 }
 
+void JitterBuffer::enable_time_stretching(bool enabled) {
+  time_stretching_enabled_ = enabled;
+  hh::get_logger().info("JitterBuffer: Time-stretching {}", enabled ? "enabled" : "disabled");
+}
+
+void JitterBuffer::set_stretch_factor(float factor) {
+  stretch_factor_ = factor;
+  hh::get_logger().info("JitterBuffer: Stretch factor set to {}", factor);
+}
+
+void JitterBuffer::enable_silence_insertion(bool enabled) {
+  silence_insertion_enabled_ = enabled;
+  hh::get_logger().info("JitterBuffer: Silence insertion {}", enabled ? "enabled" : "disabled");
+}
+
+void JitterBuffer::enable_plc(bool enabled) {
+  plc_enabled_ = enabled;
+  hh::get_logger().info("JitterBuffer: PLC {}", enabled ? "enabled" : "disabled");
+}
+
 } // namespace hh::audio
