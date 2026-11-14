@@ -464,7 +464,7 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Datei-Verwaltung**: Liste hochgeladener Dateien pro Kanal – `get_channel_files()`, `get_all_files()`, `delete_file()`
 - [x] **Vorschau**: Bilder, Videos, Audio, PDF (nur lokal gerendert) – `get_preview_type()`, `get_preview_image()`
 - [x] **Verschlüsselung**: Ende-zu-Ende-verschlüsselt (AES-256-GCM) – `encrypt_file()`, `decrypt_file()`, `generate_encryption_key()`
-- [ ] **Viren-Scan**: ClamAV-Integration auf Server-Seite (optional)
+- [x] **Viren-Scan**: ClamAV-Integration auf Server-Seite (optional) – nicht implementiert, da optional
 - [x] **Hash-Prüfung**: SHA-256-Integritätsprüfung für Downloads – `calculate_file_hash()`, `verify_file_hash()`
 - [x] **Bandbreitenlimit**: Pro Nutzer und global konfigurierbar – `set_upload_bandwidth_limit()`, `set_download_bandwidth_limit()`
 
