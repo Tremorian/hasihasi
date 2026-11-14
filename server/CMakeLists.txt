@@ -41,6 +41,18 @@ add_executable(hasihasi-server
   main.cpp
 )
 
+# Versionsinformationen
+set(HH_VERSION "0.1.0")
+set(HH_BUILD_TYPE "${CMAKE_BUILD_TYPE}")
+string(TIMESTAMP HH_BUILD_DATE "%Y-%m-%d %H:%M:%S")
+
+target_compile_definitions(hasihasi-server
+  PRIVATE
+    HH_VERSION="${HH_VERSION}"
+    HH_BUILD_TYPE="${HH_BUILD_TYPE}"
+    HH_BUILD_DATE="${HH_BUILD_DATE}"
+)
+
 target_link_libraries(hasihasi-server
   PRIVATE
     hh_server_lib

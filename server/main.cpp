@@ -49,13 +49,21 @@ int main(int argc, char* argv[]) {
     if (arg == "--config" && i + 1 < argc) {
       config_path = argv[++i];
     } else if (arg == "--version") {
-      std::cout << "hasihasi-server 0.1.0\n"
+      std::cout << "hasihasi-server " << HH_VERSION << "\n"
+                   "Build: " << HH_BUILD_TYPE << "\n"
+                   "Build-Datum: " << HH_BUILD_DATE << "\n"
+                   "\n"
                    "SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>\n"
                    "SPDX-License-Identifier: GPL-3.0-or-later\n"
-                   "Homepage: https://hasihasi.de\n";
+                   "\n"
+                   "HasiHasi – Low-Latency Linux Voice Chat\n"
+                   "Homepage: https://hasihasi.de\n"
+                   "GitHub: https://github.com/tremorian/hasihasi\n";
       return 0;
     } else if (arg == "--help" || arg == "-h") {
       std::cout << "Verwendung: hasihasi-server [OPTIONEN]\n"
+                   "\n"
+                   "HasiHasi – Low-Latency Linux Voice Chat\n"
                    "\n"
                    "Optionen:\n"
                    "  --config <pfad>   Konfigurationsdatei (Standard: /etc/hasihasi/server.toml)\n"
