@@ -49,6 +49,7 @@ add_executable(unit_tests
   test_mobile_audio.cpp
   test_offline_cache.cpp
   test_battery_optimizer.cpp
+  test_voice_assistant.cpp
 )
 
 target_link_libraries(unit_tests

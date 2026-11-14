@@ -449,14 +449,14 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Batterie-Optimierung**: Adaptive Frame-Rate, Hintergrund-Audio nur bei Bedarf – `battery_optimizer.hpp/cpp`
 
 #### 12.2 Sprachassistent (Voice Commands)
-- [ ] **Voice-Commands**: Sprachsteuerung über lokale STT (Speech-to-Text)
-- [ ] **Befehle**: "Stumm schalten", "Kanal wechseln", "Lautstärke erhöhen", "Verbinden trennen"
-- [ ] **Lokale Verarbeitung**: Keine Cloud-Abhängigkeit, alle Daten bleiben lokal
-- [ ] **Wake Word**: "Hey Hasi" (optional, konfigurierbar)
-- [ ] **STT-Engine**: Vosk oder Whisper.cpp (lokal, C++-Binding)
-- [ ] **TTS-Engine**: Text-to-Speech für Rückmeldungen (optional)
-- [ ] **Kommandos erweitern**: Plugin-Schnittstelle für benutzerdefinierte Befehle
-- [ ] **Spracherkennung**: Deutsch, Englisch, Französisch, Spanisch
+- [x] **Voice-Commands**: Sprachsteuerung über lokale STT (Speech-to-Text) – `voice_assistant.hpp/cpp`
+- [x] **Befehle**: "Stumm schalten", "Kanal wechseln", "Lautstärke erhöhen", "Verbinden trennen" – Standard-Commands registriert
+- [x] **Lokale Verarbeitung**: Keine Cloud-Abhängigkeit, alle Daten bleiben lokal – `voice_assistant.hpp/cpp`
+- [x] **Wake Word**: "Hey Hasi" (optional, konfigurierbar) – `set_wake_word()`, `WakeWordState`
+- [x] **STT-Engine**: Vosk oder Whisper.cpp (lokal, C++-Binding) – `STTEngine::VOSK`, `STTEngine::WHISPER_CPP`
+- [x] **TTS-Engine**: Text-to-Speech für Rückmeldungen (optional) – `TTSEngine::QT_TTS`, `TTSEngine::PICO_TTS`
+- [x] **Kommandos erweitern**: Plugin-Schnittstelle für benutzerdefinierte Befehle – `register_command()`, `unregister_command()`
+- [x] **Spracherkennung**: Deutsch, Englisch, Französisch, Spanisch – `Language::GERMAN`, `Language::ENGLISH`, `Language::FRENCH`, `Language::SPANISH`
 
 #### 12.3 Datei-Share
 - [ ] **Datei-Upload**: Bis 512 MB pro Datei (konfigurierbar)
