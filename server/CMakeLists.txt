@@ -11,6 +11,7 @@ add_library(hh_server_lib
   prometheus_metrics.cpp
   admin_server.cpp
   rate_limiter.cpp
+  welcome_message.cpp
   channel.cpp
   user.cpp
   session_manager.cpp
