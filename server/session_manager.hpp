@@ -105,8 +105,13 @@ public:
   // Kanal-Wechsel
   bool switch_channel(uint32_t user_id, uint32_t new_channel_id);
 
-  // Voice-Weiterleitung (vereinfacht)
+  // Voice-Weiterleitung (verschlüsselt)
   void route_voice(uint32_t from_user_id, std::span<const uint8_t> voice_data);
+
+  // Crypto-Initialisierung
+  bool initialize_crypto(const std::array<uint8_t, VoiceCrypto::KEY_SIZE>& key);
+  void set_crypto_config(const VoiceCrypto::Config& config);
+  void rotate_key();
 
   // TextChat-Verwaltung
   std::shared_ptr<TextMessage> send_text_message(uint32_t sender_id, const std::string& sender_name,

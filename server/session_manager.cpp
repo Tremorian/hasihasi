@@ -86,6 +86,18 @@ ServerSessionManager::ServerSessionManager(asio::io_context& ioc)
   voice_router_.open(64738);
 }
 
+bool ServerSessionManager::initialize_crypto(const std::array<uint8_t, VoiceCrypto::KEY_SIZE>& key) {
+  return voice_router_.initialize_crypto(key);
+}
+
+void ServerSessionManager::set_crypto_config(const VoiceCrypto::Config& config) {
+  voice_router_.set_crypto_config(config);
+}
+
+void ServerSessionManager::rotate_key() {
+  voice_router_.rotate_key();
+}
+
 std::shared_ptr<User> ServerSessionManager::register_user(uint32_t id, const std::string& username,
                                                            const std::shared_ptr<Connection>& connection) {
   auto user = user_manager_.create_user(id, username, connection);
@@ -182,13 +194,48 @@ void ServerSessionManager::route_voice(uint32_t from_user_id, std::span<const ui
   auto channel = multi_channel_.find_channel(from_user->channel_id());
   if (!channel) return;
 
-  for (auto user_id : channel->users()) {
-    if (user_id == from_user_id) continue; // Nicht an sich selbst senden
+  // Whisper/Shout-Ziele prüfen
+  auto voice_target = voice_target_manager_.get_voice_target(from_user_id);
+  if (voice_target_manager_.is_whispering(from_user_id)) {
+    // Nur an Whisper-Ziel senden
+    auto target_user = user_manager_.find_user(voice_target.whisper_target);
+    if (target_user && !target_user->is_deafened()) {
+      voice_router_.route_to(target_user->udp_endpoint(), voice_data,
+                             static_cast<uint8_t>(from_user_id & 0xFF),
+                             static_cast<uint8_t>(voice_target.whisper_target & 0xFF));
+    }
+  } else if (voice_target_manager_.is_shouting(from_user_id)) {
+    // An alle im Kanal senden (normal)
+    std::vector<VoiceRouter::ClientEndpoint> endpoints;
+    for (auto user_id : channel->users()) {
+      if (user_id == from_user_id) continue;
+      auto target_user = user_manager_.find_user(user_id);
+      if (target_user && !target_user->is_deafened()) {
+        endpoints.emplace_back(target_user->udp_endpoint(), user_id);
+      }
+    }
+    voice_router_.route_to_all(endpoints, voice_data,
+                               static_cast<uint8_t>(from_user_id & 0xFF));
+  } else {
+    // Normal an alle im Kanal senden (außer Whisper-Ziele)
+    std::vector<VoiceRouter::ClientEndpoint> endpoints;
+    for (auto user_id : channel->users()) {
+      if (user_id == from_user_id) continue; // Nicht an sich selbst senden
 
-    auto target_user = user_manager_.find_user(user_id);
-    if (!target_user || target_user->is_deafened()) continue;
+      auto target_user = user_manager_.find_user(user_id);
+      if (!target_user || target_user->is_deafened()) continue;
 
-    voice_router_.route_to(target_user->udp_endpoint(), voice_data);
+      // Prüfe, ob Ziel-User diesem User flüstert
+      auto target_voice_target = voice_target_manager_.get_voice_target(user_id);
+      if (voice_target_manager_.is_whispering(user_id) && 
+          target_voice_target.whisper_target != from_user_id) {
+        continue; // Ignoriere Sprecher, die nicht an uns flüstern
+      }
+
+      endpoints.emplace_back(target_user->udp_endpoint(), user_id);
+    }
+    voice_router_.route_to_all(endpoints, voice_data,
+                               static_cast<uint8_t>(from_user_id & 0xFF));
   }
 }
 

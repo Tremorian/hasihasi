@@ -22,6 +22,7 @@ add_executable(unit_tests
   test_text_chat.cpp
   test_ban_kick.cpp
   test_whisper_shout.cpp
+  test_voice_crypto.cpp
 )
 
 target_link_libraries(unit_tests
@@ -31,6 +32,7 @@ target_link_libraries(unit_tests
     hh_audio::hh_audio
     hh_net::hh_net
     client_core::client_core
+    hh_server_lib
 )
 
 target_compile_features(unit_tests PRIVATE cxx_std_20)
