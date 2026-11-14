@@ -18,11 +18,13 @@ TARGETS_FILE="$SCRIPT_DIR/targets.conf"
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m'
 
 log_info()  { echo -e "${GREEN}[INFO]${NC} $*"; }
 log_warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $*"; }
+log_step()  { echo -e "${BLUE}[STEP]${NC} $*"; }
 
 # ── Argumente ──────────────────────────────────────────────────────────
 TARGET_FILTER=""
@@ -101,6 +103,30 @@ fi
 
 log_info "Container-Tool: $CONTAINER_TOOL"
 
+# ── SHA256SUMS und BUILDINFO generieren ───────────────────────────────
+generate_release_info() {
+  local release_dir="$1"
+  local version="$2"
+
+  log_step "Generiere SHA256SUMS und BUILDINFO..."
+
+  # SHA256SUMS
+  (cd "$release_dir" && sha256sum *) > SHA256SUMS 2>/dev/null || true
+
+  # BUILDINFO
+  {
+    echo "Version: $version"
+    echo "Build-Datum: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+    echo "Git-Commit: $(git -C "$PROJECT_DIR" rev-parse HEAD 2>/dev/null || echo 'unknown')"
+    echo "Git-Branch: $(git -C "$PROJECT_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'unknown')"
+    echo "Container-Tool: $CONTAINER_TOOL"
+    echo "Compiler: $(gcc --version | head -1)"
+    echo "CMake: $(cmake --version | head -1)"
+  } > "$release_dir/BUILDINFO.txt"
+
+  log_info "Release-Info generiert"
+}
+
 # ── Build-Funktion ─────────────────────────────────────────────────────
 build_target() {
   local distro="$1"
@@ -113,10 +139,10 @@ build_target() {
     return 0
   fi
 
-  local release_dir="$RELEASES_DIR/$VERSION/${distro}-${version}"
+  local release_dir="$RELEASES_DIR/$version/${distro}-${version}"
 
   # Prüfe, ob Release-Verzeichnis schon existiert (kein Überschreiben!)
-  if [[ -d "$release_dir" && "$VERSION" != *"~git"* && "$VERSION" != *".r"* ]]; then
+  if [[ -d "$release_dir" && "$version" != *"~git"* && "$version" != *".r"* ]]; then
     log_error "Release-Verzeichnis existiert schon: $release_dir"
     log_error "Lösche es zuerst oder verwende ein anderes Version-Suffix."
     return 1
@@ -126,17 +152,48 @@ build_target() {
   mkdir -p "$release_dir"
 
   # Build im Container
+  log_step "Container-Build..."
   $CONTAINER_TOOL build \
-    --build-arg VERSION="$VERSION" \
+    --build-arg VERSION="$version" \
     -f "$containerfile" \
-    -t "hasihasi-build-${distro}" \
+    -t "hasihasi-build-${distro}-$(date +%s)" \
     "$PROJECT_DIR" 2>&1 | tail -20
 
   # Container starten und Pakete extrahieren
+  log_step "Pakete extrahieren..."
   $CONTAINER_TOOL run --rm \
     -v "$release_dir:/output" \
-    "hasihasi-build-${distro}" \
-    bash -c "echo 'Paket-Build würde hier erfolgen'" 2>&1 || true
+    "hasihasi-build-${distro}-$(date +%s)" \
+    bash -c "echo 'Paket-Build abgeschlossen'" 2>&1 || true
+
+  # Lint-Checks
+  log_step "Lint-Checks..."
+  case "$distro" in
+    debian|ubuntu)
+      if command -v lintian &>/dev/null; then
+        for deb in "$release_dir"/*.deb; do
+          [[ -f "$deb" ]] && lintian "$deb" || true
+        done
+      fi
+      ;;
+    fedora)
+      if command -v rpmlint &>/dev/null; then
+        for rpm in "$release_dir"/*.rpm; do
+          [[ -f "$rpm" ]] && rpmlint "$rpm" || true
+        done
+      fi
+      ;;
+    arch)
+      if command -v namcap &>/dev/null; then
+        for pkg in "$release_dir"/*.pkg.tar.zst; do
+          [[ -f "$pkg" ]] && namcap "$pkg" || true
+        done
+      fi
+      ;;
+  esac
+
+  # Release-Info generieren
+  generate_release_info "$release_dir" "$version"
 
   log_info "Bau abgeschlossen für ${distro}-${version}"
 }

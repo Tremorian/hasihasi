@@ -2,17 +2,41 @@
 # SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-FROM archlinux:base
+FROM archlinux:latest
 
 RUN pacman -Syu --noconfirm \
     base-devel cmake ninja git \
     spdlog tomlplusplus asio opus pipewire openssl \
-    protobuf sqlite catch2 qt6-base \
+    protobuf sqlite catch2 qt6-base qt6-tools \
+    pacman-contrib namcap \
     && pacman -Sc --noconfirm
 
 WORKDIR /src
-COPY . /src
 
-RUN chmod +x packaging/build-packages.sh
+# Build-Skript kopieren und ausführbar machen
+COPY packaging/build-packages.sh /src/packaging/build-packages.sh
+RUN chmod +x /src/packaging/build-packages.sh
 
-CMD ["bash", "packaging/build-packages.sh"]
+# Projekt-Dateien kopieren (nur notwendige)
+COPY CMakeLists.txt /src/CMakeLists.txt
+COPY CMakePresets.json /src/CMakePresets.json
+COPY REUSE.toml /src/REUSE.toml
+COPY LICENSE /src/LICENSE
+COPY proto /src/proto
+COPY libs /src/libs
+COPY server /src/server
+COPY client /src/client
+COPY tools /src/tools
+COPY tests /src/tests
+COPY packaging /src/packaging
+
+# Build durchführen
+RUN mkdir -p /output && \
+    cmake --preset release -DCMAKE_INSTALL_PREFIX=/usr && \
+    cmake --build --preset release && \
+    ctest --preset release && \
+    cmake --install build-release --prefix /usr && \
+    cd packaging && \
+    ./build-packages.sh --version ${VERSION:-0.1.0}
+
+CMD ["bash", "-c", "echo 'Build abgeschlossen'"]
