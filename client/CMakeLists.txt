@@ -22,6 +22,7 @@ add_library(client_core
   src/autostart_manager.cpp
   src/theme_manager.cpp
   src/hidpi_manager.cpp
+  src/markdown_light.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)

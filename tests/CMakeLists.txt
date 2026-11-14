@@ -35,6 +35,7 @@ add_executable(unit_tests
   test_hidpi.cpp
   test_voice_router.cpp
   test_about_dialog.cpp
+  test_markdown.cpp
 )
 
 target_link_libraries(unit_tests
