@@ -321,6 +321,10 @@ void MainWindow::setup_central_widget() {
 void MainWindow::setup_status_bar() {
   status_bar_ = statusBar();
   status_bar_->showMessage("Nicht verbunden");
+
+  // Latenz-Monitor hinzufügen
+  latency_label_ = new QLabel("Ø Latenz: --", this);
+  status_bar_->addPermanentWidget(latency_label_);
 }
 
 void MainWindow::setup_tray_icon() {
@@ -677,6 +681,27 @@ void MainWindow::on_connect() {
     return;
   }
 
+  // Voice-Pipeline erstellen
+  if (!voice_pipeline_) {
+    hh::client::VoicePipeline::Config config;
+    config.enable_vad = vad_enabled_;
+    config.vad_threshold = static_cast<float>(vad_threshold_);
+
+    voice_pipeline_ = std::make_shared<hh::client::VoicePipeline>(config);
+
+    // Voice-Status-Callback
+    voice_pipeline_->set_audio_status_callback([this](double volume, bool speaking) {
+      on_voice_status(volume, speaking);
+
+      // Latenz-Monitor aktualisieren
+      if (speaking) {
+        // Simulierte Latenz basierend auf Netzwerk-Statistik
+        double simulated_latency = stats_rtt_ms_ / 2.0 + 10.0; // RTT/2 + Codec-Latenz
+        add_latency_sample(simulated_latency);
+      }
+    });
+  }
+
   // Callbacks registrieren
   session_->set_connection_callback([this](bool success, const std::string& message) {
     set_connection_status(message);
@@ -687,6 +712,13 @@ void MainWindow::on_connect() {
     if (success) {
       // Kanal-Liste anfordern
       session_->request_channel_list();
+
+      // Voice-Pipeline starten
+      if (voice_pipeline_) {
+        voice_pipeline_->start(session_);
+        chat_area_->appendPlainText(
+          QString("[%1] Voice-Pipeline gestartet").arg(QDateTime::currentDateTime().toString("HH:mm:ss")));
+      }
     }
   });
 
@@ -710,8 +742,9 @@ void MainWindow::on_connect() {
   });
 
   session_->set_voice_data_callback([this](std::span<const uint8_t> voice_data) {
+    // Voice-Daten an Jitter-Buffer in Voice-Pipeline weiterleiten
+    // TODO: Jitter-Buffer füllen
     (void)voice_data;
-    // TODO: Voice-Daten an Audio-Pipeline weiterleiten
   });
 
   // Verbindung herstellen
@@ -735,8 +768,13 @@ void MainWindow::on_ptt_pressed() {
   if (ptt_button_) {
     ptt_button_->setChecked(true);
   }
+
+  // Voice-Pipeline unmute
+  if (voice_pipeline_) {
+    voice_pipeline_->set_muted(false);
+  }
+
   hh::get_logger().info("PTT activated");
-  // TODO: Audio-Encoder starten
 }
 
 void MainWindow::on_ptt_released() {
@@ -744,8 +782,13 @@ void MainWindow::on_ptt_released() {
   if (ptt_button_) {
     ptt_button_->setChecked(false);
   }
+
+  // Voice-Pipeline mute
+  if (voice_pipeline_) {
+    voice_pipeline_->set_muted(true);
+  }
+
   hh::get_logger().info("PTT deactivated");
-  // TODO: Audio-Encoder stoppen
 }
 
 void MainWindow::on_channel_double_clicked(const QModelIndex& index) {
@@ -856,7 +899,32 @@ void MainWindow::on_statistics_timer() {
                            .arg(stats_loss_percent_)
                            .arg(stats_bitrate_kbit_)
                            .arg(stats_latency_ms_);
-    // Status-Bar aktualisieren (zusätzliche Information)
+
+    // Latenz-Monitor aktualisieren
+    if (latency_label_) {
+      latency_label_->setText(QString("Ø Latenz: %.1fms | Min: %.1fms | Max: %.1fms")
+                                .arg(avg_latency_)
+                                .arg(min_latency_)
+                                .arg(max_latency_));
+    }
+  }
+}
+
+void MainWindow::on_voice_status(double volume, bool speaking) {
+  // PTT-Button visuelles Feedback
+  if (ptt_button_) {
+    if (speaking && volume > 5.0) {
+      ptt_button_->setStyleSheet("QPushButton { background-color: #FFCC33; color: #0A0A08; }");
+    } else {
+      ptt_button_->setStyleSheet("");
+    }
+  }
+
+  // Status-Bar aktualisieren
+  if (status_bar_) {
+    status_bar_->showMessage(QString("Volume: %.0f%% | Speaking: %1")
+                               .arg(volume)
+                               .arg(speaking ? "Ja" : "Nein"), 3000);
   }
 }
 
@@ -925,6 +993,28 @@ void MainWindow::update_stats(double rtt_ms, double jitter_ms, double loss_perce
   stats_loss_percent_ = loss_percent;
   stats_bitrate_kbit_ = bitrate_kbit;
   stats_latency_ms_ = latency_ms;
+}
+
+void MainWindow::add_latency_sample(double latency_ms) {
+  latency_samples_.push_back(latency_ms);
+
+  // Max 100 Samples behalten
+  if (latency_samples_.size() > 100) {
+    latency_samples_.erase(latency_samples_.begin());
+  }
+
+  // Durchschnitt, Minimum, Maximum berechnen
+  double sum = 0.0;
+  min_latency_ = 1000.0;
+  max_latency_ = 0.0;
+
+  for (double sample : latency_samples_) {
+    sum += sample;
+    if (sample < min_latency_) min_latency_ = sample;
+    if (sample > max_latency_) max_latency_ = sample;
+  }
+
+  avg_latency_ = sum / latency_samples_.size();
 }
 
 } // namespace hh::client::ui

@@ -45,44 +45,16 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDateTime>
-#include <QTimer>
-#include <QSettings>
-#include <QSystemTrayIcon>
-#include <QMenu>
-#include <QAction>
-#include <QMessageBox>
-#include <QInputDialog>
-#include <QFileDialog>
-#include <QDialog>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QFormLayout>
-#include <QGroupBox>
-#include <QCheckBox>
-#include <QSlider>
-#include <QComboBox>
-#include <QProgressBar>
-#include <QHeaderView>
-#include <QStyledItemDelegate>
-#include <QStyleFactory>
-#include <QFontDatabase>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QStyleOption>
-#include <QApplication>
-#include <QDesktopServices>
-#include <QUrl>
-#include <QDateTime>
 
 #include <memory>
 #include <string>
 #include <vector>
 #include <map>
 #include <functional>
+#include <chrono>
 
 #include "hh/client/session.hpp"
+#include "hh/client/voice_pipeline.hpp"
 
 namespace hh::client::ui {
 
@@ -97,6 +69,14 @@ struct ChannelNode {
   std::string description;
   std::vector<ChannelNode*> children;
   std::vector<uint32_t> user_ids;
+
+  // Positional Audio
+  float x = 0.0f;
+  float y = 0.0f;
+  float z = 0.0f;
+  bool is_speaking = false;
+  bool is_muted = false;
+  bool is_deafened = false;
 };
 
 class ChannelTreeModel : public QAbstractItemModel {
@@ -112,6 +92,7 @@ public:
   void add_user_to_channel(uint32_t channel_id, uint32_t user_id);
   void remove_user_from_channel(uint32_t channel_id, uint32_t user_id);
   void set_speaking(uint32_t user_id, bool speaking);
+  void set_user_position(uint32_t user_id, float x, float y, float z);
 
   // QAbstractItemModel-Interface
   QModelIndex index(int row, int column, const QModelIndex& parent = {}) const override;
@@ -161,10 +142,18 @@ public:
   void update_channel_list(const std::vector<std::pair<uint32_t, std::string>>& channels);
   void update_user_list(uint32_t channel_id, const std::vector<std::pair<uint32_t, std::string>>& users);
   void set_user_speaking(uint32_t user_id, bool speaking);
+  void set_user_muted(uint32_t user_id, bool muted);
+  void set_user_deafened(uint32_t user_id, bool deafened);
 
   // Statistik
   void update_stats(double rtt_ms, double jitter_ms, double loss_percent,
                     int bitrate_kbit, int latency_ms);
+
+  // Latenz-Monitor
+  void add_latency_sample(double latency_ms);
+  double avg_latency() const { return avg_latency_; }
+  double min_latency() const { return min_latency_; }
+  double max_latency() const { return max_latency_; }
 
 protected:
   void keyPressEvent(QKeyEvent* event) override;
@@ -181,6 +170,7 @@ private slots:
   void on_settings_clicked();
   void on_tray_activated(QSystemTrayIcon::ActivationReason reason);
   void on_statistics_timer();
+  void on_voice_status(double volume, bool speaking);
 
 private:
   void setup_ui();
@@ -203,9 +193,19 @@ private:
   QStatusBar* status_bar_ = nullptr;
   QSystemTrayIcon* tray_icon_ = nullptr;
   QTimer* stats_timer_ = nullptr;
+  QLabel* latency_label_ = nullptr;
 
   // Session
   std::shared_ptr<hh::client::Session> session_;
+
+  // Voice-Pipeline
+  std::shared_ptr<hh::client::VoicePipeline> voice_pipeline_;
+
+  // Latenz-Monitor
+  std::vector<double> latency_samples_;
+  double avg_latency_ = 0.0;
+  double min_latency_ = 1000.0;
+  double max_latency_ = 0.0;
 
   // PTT/VAD
   bool ptt_active_ = false;
