@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>HasiHasi – Low-Latency Voice Chat</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
+  <link rel="apple-touch-icon" href="/assets/icon-192.png">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/animations.css">
+</head>
+<body class="theme-dark">
+  <div id="app">
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+      <div class="splash-content">
+        <img src="/assets/logo.svg" alt="HasiHasi" class="splash-logo">
+        <h1 class="splash-title">HasiHasi</h1>
+        <p class="splash-subtitle">Low-Latency Voice Chat für Gamer</p>
+        <div class="splash-loader">
+          <div class="loader-spinner"></div>
+          <p class="loader-text">Lade HasiHasi...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen hidden">
+      <div class="login-container">
+        <div class="login-header">
+          <img src="/assets/logo.svg" alt="HasiHasi" class="login-logo">
+          <h1 class="login-title">Willkommen bei HasiHasi</h1>
+          <p class="login-subtitle">Logge dich ein, um teilzunehmen</p>
+        </div>
+        
+        <form id="login-form" class="login-form">
+          <div class="form-group">
+            <label for="username" class="form-label">Benutzername</label>
+            <input type="text" id="username" class="form-input" placeholder="Dein Name" required autocomplete="username">
+          </div>
+          
+          <div class="form-group">
+            <label for="server-url" class="form-label">Server-URL</label>
+            <input type="text" id="server-url" class="form-input" placeholder="wss://hasihasi.de" value="wss://localhost:64738" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="password" class="form-label">Passwort <span class="optional">(optional)</span></label>
+            <input type="password" id="password" class="form-input" placeholder="Dein Passwort" autocomplete="current-password">
+          </div>
+          
+          <div class="form-options">
+            <label class="checkbox-label">
+              <input type="checkbox" id="remember-me" checked>
+              <span class="checkbox-text">Angemeldet bleiben</span>
+            </label>
+            
+            <label class="checkbox-label">
+              <input type="checkbox" id="auto-connect">
+              <span class="checkbox-text">Automatisch verbinden</span>
+            </label>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-login">
+            <span class="btn-text">Verbinden</span>
+            <span class="btn-loader hidden">
+              <span class="loader-spinner-small"></span>
+            </span>
+          </button>
+        </form>
+        
+        <div class="login-footer">
+          <p class="login-info">HasiHasi v0.1.0 – GPL-3.0-or-later</p>
+          <div class="login-actions">
+            <button id="theme-toggle" class="btn btn-secondary btn-icon" title="Theme wechseln">
+              <span class="btn-icon-light">🌙</span>
+              <span class="btn-icon-dark hidden">☀️</span>
+            </button>
+            <button id="language-select" class="btn btn-secondary btn-icon" title="Sprache wählen">
+              🌐
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-screen" class="screen hidden">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <div class="app-logo">
+            <img src="/assets/logo.svg" alt="HasiHasi">
+          </div>
+          <h1 class="app-title">HasiHasi</h1>
+        </div>
+        
+        <div class="header-center">
+          <div class="server-status">
+            <span class="status-dot status-connected"></span>
+            <span class="status-text">Verbunden</span>
+          </div>
+        </div>
+        
+        <div class="header-right">
+          <button id="user-menu" class="btn btn-icon">
+            <span class="user-avatar">H</span>
+          </button>
+          <button id="settings-menu" class="btn btn-icon">
+            ⚙️
+          </button>
+          <button id="disconnect-btn" class="btn btn-danger btn-icon">
+            📞
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="app-main">
+        <!-- Sidebar -->
+        <aside class="app-sidebar">
+          <div class="sidebar-section">
+            <h3 class="sidebar-title">Kanäle</h3>
+            <div id="channel-list" class="channel-list">
+              <div class="channel-item channel-active">
+                <span class="channel-icon">🎮</span>
+                <span class="channel-name">Lobby</span>
+                <span class="channel-users">3/10</span>
+              </div>
+              <div class="channel-item">
+                <span class="channel-icon">🎯</span>
+                <span class="channel-name">Gaming</span>
+                <span class="channel-users">5/20</span>
+              </div>
+              <div class="channel-item">
+                <span class="channel-icon">💬</span>
+                <span class="channel-name">Chat</span>
+                <span class="channel-users">2/15</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="sidebar-section">
+            <h3 class="sidebar-title">Benutzer</h3>
+            <div id="user-list" class="user-list">
+              <div class="user-item user-speaking">
+                <span class="user-avatar">A</span>
+                <span class="user-name">Alice</span>
+                <span class="user-status speaking"></span>
+              </div>
+              <div class="user-item">
+                <span class="user-avatar">B</span>
+                <span class="user-name">Bob</span>
+                <span class="user-status"></span>
+              </div>
+              <div class="user-item user-muted">
+                <span class="user-avatar">C</span>
+                <span class="user-name">Charlie</span>
+                <span class="user-status muted"></span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Chat Area -->
+        <section class="app-chat">
+          <div id="chat-messages" class="chat-messages">
+            <div class="chat-message system">
+              <span class="system-icon">ℹ️</span>
+              <span class="system-text">Willkommen bei HasiHasi!</span>
+            </div>
+            <div class="chat-message">
+              <span class="message-avatar">A</span>
+              <div class="message-content">
+                <div class="message-header">
+                  <span class="message-author">Alice</span>
+                  <span class="message-time">14:30</span>
+                </div>
+                <p class="message-text">Hey zusammen! Wie geht's?</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chat-input-container">
+            <button id="voice-btn" class="btn-voice">
+              <span class="voice-icon">🎤</span>
+              <span class="voice-text">PTT</span>
+              <div class="voice-wave hidden">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+              </div>
+            </button>
+            
+            <input type="text" id="chat-input" class="chat-input" placeholder="Nachricht schreiben...">
+            
+            <button id="send-btn" class="btn btn-primary btn-send">
+              ➤
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        <div class="footer-stats">
+          <div class="stat-item">
+            <span class="stat-label">Latenz</span>
+            <span class="stat-value stat-good">23ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Jitter</span>
+            <span class="stat-value stat-good">2ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Verlust</span>
+            <span class="stat-value stat-good">0.1%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Bitrate</span>
+            <span class="stat-value">48 kbit/s</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Einstellungen</h2>
+          <button id="close-settings" class="btn btn-icon modal-close">✕</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="settings-section">
+            <h3 class="settings-section-title">Audio</h3>
+            
+            <div class="form-group">
+              <label for="audio-input" class="form-label">Mikrofon</label>
+              <select id="audio-input" class="form-input">
+                <option value="default">Standard</option>
+                <option value="1">HyperX Cloud II</option>
+                <option value="2">Blue Yeti</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="audio-output" class="form-label">Lautsprecher</label>
+              <select id="audio-output" class="form-input">
+                <option value="default">Standard</option>
+                <option value="1">HyperX Cloud II</option>
+                <option value="2">SteelSeries Arctis 7</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="volume-input" class="form-label">Eingangspegel</label>
+              <input type="range" id="volume-input" class="form-range" min="0" max="100" value="80">
+              <span class="range-value">80%</span>
+            </div>
+            
+            <div class="form-group">
+              <label for="volume-output" class="form-label">Ausgabepegel</label>
+              <input type="range" id="volume-output" class="form-range" min="0" max="100" value="70">
+              <span class="range-value">70%</span>
+            </div>
+            
+            <div class="form-options">
+              <label class="checkbox-label">
+                <input type="checkbox" id="noise-suppression" checked>
+                <span class="checkbox-text">Rauschunterdrückung</span>
+              </label>
+              
+              <label class="checkbox-label">
+                <input type="checkbox" id="echo-cancellation" checked>
+                <span class="checkbox-text">Echo-Unterdrückung</span>
+              </label>
+              
+              <label class="checkbox-label">
+                <input type="checkbox" id="auto-gain">
+                <span class="checkbox-text">Automatische Lautstärkeregelung</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="settings-section">
+            <h3 class="settings-section-title">Darstellung</h3>
+            
+            <div class="form-group">
+              <label for="theme-select" class="form-label">Theme</label>
+              <select id="theme-select" class="form-input">
+                <option value="dark">Dunkel</option>
+                <option value="light">Hell</option>
+                <option value="auto">Automatisch</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="language-select-modal" class="form-label">Sprache</label>
+              <select id="language-select-modal" class="form-input">
+                <option value="de">Deutsch</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button id="save-settings" class="btn btn-primary">Speichern</button>
+          <button id="cancel-settings" class="btn btn-secondary">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Menu -->
+    <div id="user-dropdown" class="dropdown hidden">
+      <div class="dropdown-header">
+        <div class="dropdown-user">
+          <span class="dropdown-avatar">H</span>
+          <div class="dropdown-user-info">
+            <span class="dropdown-username">HasiUser</span>
+            <span class="dropdown-status">Verbunden</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="dropdown-menu">
+        <button class="dropdown-item">
+          <span class="dropdown-icon">👤</span>
+          <span class="dropdown-text">Profil</span>
+        </button>
+        <button class="dropdown-item">
+          <span class="dropdown-icon">⚙️</span>
+          <span class="dropdown-text">Einstellungen</span>
+        </button>
+        <button class="dropdown-item">
+          <span class="dropdown-icon">📋</span>
+          <span class="dropdown-text">Kurzanleitung</span>
+        </button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item dropdown-item-danger">
+          <span class="dropdown-icon">📞</span>
+          <span class="dropdown-text">Trennen</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/i18n.js"></script>
+  <script src="/js/audio-engine.js"></script>
+  <script src="/js/websocket-client.js"></script>
+  <script src="/js/app.js"></script>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>
