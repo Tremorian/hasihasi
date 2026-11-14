@@ -360,29 +360,29 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 **Ziel:** Vollständige Internationalisierung (i18n) mit Qt Linguist.
 
 #### 10.5.1 Multi-Language-Unterstützung
-- [ ] **Qt Linguist**: Für Übersetzungen verwenden
-- [ ] **Sprachen**: Deutsch (de), Englisch (en), Französisch (fr), Spanisch (es)
-- [ ] **QTranslator**: Dynamisches Laden von Übersetzungen zur Laufzeit
-- [ ] **Sprachwechsel**: Im UI (Einstellungen → Sprache)
-- [ ] **Fallback**: Englisch als Fallback, wenn Übersetzung fehlt
+- [x] **Qt Linguist**: Für Übersetzungen verwenden – `i18n_manager.hpp/cpp`
+- [x] **Sprachen**: Deutsch (de), Englisch (en), Französisch (fr), Spanisch (es)
+- [x] **QTranslator**: Dynamisches Laden von Übersetzungen zur Laufzeit – `i18n_manager.hpp/cpp`
+- [x] **Sprachwechsel**: Im UI (Einstellungen → Sprache) – `languagedialog.hpp/cpp`
+- [x] **Fallback**: Englisch als Fallback, wenn Übersetzung fehlt – `i18n_manager.hpp/cpp`
 
 #### 10.5.2 Translation-Files
-- [ ] **`.ts`-Files**: Qt Linguist Translation-Files
-- [ ] **`.qm`-Files**: Kompilierte Translation-Files
-- [ ] **`translations/`**: Verzeichnis für Translation-Files
-- [ ] **`LINGUIST_FILES`**: In CMakeLists.txt konfigurieren
+- [x] **`.ts`-Files**: Qt Linguist Translation-Files – `translations/qthasihasi_{de,en,fr,es}.ts`
+- [x] **`.qm`-Files**: Kompilierte Translation-Files – `cmake/translations.cmake`
+- [x] **`translations/`**: Verzeichnis für Translation-Files – `translations/`
+- [x] **`LINGUIST_FILES`**: In CMakeLists.txt konfigurieren – `cmake/translations.cmake`
 
 #### 10.5.3 Code-Integration
-- [ ] **`tr()`-Funktionen**: Alle UI-Strings mit `tr()` markieren
-- [ ] **`QCoreApplication::translate()`**: Für nicht-UI-Strings
-- [ ] **`QLocale`**: Für locale-spezifische Formatierung (Datum, Zeit, Zahlen)
-- [ ] **`QTranslator::installTranslator()`**: Beim Start laden
+- [x] **`tr()`-Funktionen**: Alle UI-Strings mit `tr()` markieren – `mainwindow.cpp`, `languagedialog.cpp`
+- [x] **`QCoreApplication::translate()`**: Für nicht-UI-Strings – `i18n_manager.hpp/cpp`
+- [x] **`QLocale`**: Für locale-spezifische Formatierung (Datum, Zeit, Zahlen) – `i18n_manager.hpp/cpp`
+- [x] **`QTranslator::installTranslator()`**: Beim Start laden – `mainwindow.cpp`
 
 #### 10.5.4 Server-Internationalisierung
-- [ ] **Server-Meldungen**: Auf Deutsch/Englisch/Französisch/Spanisch
-- [ ] **Fehlermeldungen**: Übersetzt
-- [ ] **Willkommensnachricht**: In gewählter Sprache
-- [ ] **Prometheus-Metriken**: Englisch (Standard)
+- [x] **Server-Meldungen**: Auf Deutsch/Englisch/Französisch/Spanisch – `server_i18n.hpp/cpp`
+- [x] **Fehlermeldungen**: Übersetzt – `server_i18n.hpp/cpp`
+- [x] **Willkommensnachricht**: In gewählter Sprache – `server_i18n.hpp/cpp`
+- [x] **Prometheus-Metriken**: Englisch (Standard) – `prometheus_metrics.hpp/cpp`
 
 ---
 
