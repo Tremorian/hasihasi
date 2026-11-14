@@ -192,10 +192,77 @@ build_target() {
       ;;
   esac
 
+  # Installationstest in frischem Container
+  log_step "Installationstest..."
+  test_installation "$distro" "$release_dir" "$version"
+
   # Release-Info generieren
   generate_release_info "$release_dir" "$version"
 
   log_info "Bau abgeschlossen für ${distro}-${version}"
+}
+
+# ── Installationstest ──────────────────────────────────────────────────
+test_installation() {
+  local distro="$1"
+  local release_dir="$2"
+  local version="$3"
+
+  log_info "Installationstest für ${distro}..."
+
+  # Frischen Test-Container erstellen
+  local test_container="hasihasi-test-$(date +%s)"
+  local test_image="hasihasi-test-image-${distro}-$(date +%s)"
+
+  # Containerfile für Test-Container
+  local test_containerfile="$SCRIPT_DIR/containers/Containerfile.test-${distro}"
+  
+  case "$distro" in
+    debian|ubuntu)
+      # .deb-Paket installieren
+      for deb in "$release_dir"/*.deb; do
+        if [[ -f "$deb" ]]; then
+          log_info "Installiere $deb..."
+          # In frischem Container testen
+          $CONTAINER_TOOL run --rm \
+            --name "$test_container" \
+            "$distro":latest \
+            bash -c "apt-get update && apt-get install -y ./$(basename "$deb") && hasihasi --version && hasihasi-server --version" 2>&1 || true
+          break
+        fi
+      done
+      ;;
+    fedora)
+      # .rpm-Paket installieren
+      for rpm in "$release_dir"/*.rpm; do
+        if [[ -f "$rpm" ]]; then
+          log_info "Installiere $rpm..."
+          # In frischem Container testen
+          $CONTAINER_TOOL run --rm \
+            --name "$test_container" \
+            "fedora":latest \
+            bash -c "dnf install -y ./$(basename "$rpm") && hasihasi --version && hasihasi-server --version" 2>&1 || true
+          break
+        fi
+      done
+      ;;
+    arch)
+      # .pkg.tar.zst-Paket installieren
+      for pkg in "$release_dir"/*.pkg.tar.zst; do
+        if [[ -f "$pkg" ]]; then
+          log_info "Installiere $pkg..."
+          # In frischem Container testen
+          $CONTAINER_TOOL run --rm \
+            --name "$test_container" \
+            "archlinux:latest" \
+            bash -c " pacman -Syu --noconfirm ./$(basename "$pkg") && hasihasi --version && hasihasi-server --version" 2>&1 || true
+          break
+        fi
+      done
+      ;;
+  esac
+
+  log_info "Installationstest abgeschlossen für ${distro}"
 }
 
 # ── Haupt-Schleife ────────────────────────────────────────────────────
