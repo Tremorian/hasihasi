@@ -23,6 +23,7 @@ add_library(client_core
   src/theme_manager.cpp
   src/hidpi_manager.cpp
   src/markdown_light.cpp
+  src/accessibility.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)
