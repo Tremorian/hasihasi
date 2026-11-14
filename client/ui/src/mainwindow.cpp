@@ -671,12 +671,54 @@ void MainWindow::show_connect_dialog() {
 }
 
 void MainWindow::on_connect() {
-  if (session_) {
-    session_->connect("localhost", 64738);
-    set_connection_status("Verbunden");
+  if (!session_) {
     chat_area_->appendPlainText(
-      QString("[%1] Verbunden mit Server").arg(QDateTime::currentDateTime().toString("HH:mm:ss")));
+      QString("[%1] Fehler: Keine Session").arg(QDateTime::currentDateTime().toString("HH:mm:ss")));
+    return;
   }
+
+  // Callbacks registrieren
+  session_->set_connection_callback([this](bool success, const std::string& message) {
+    set_connection_status(message);
+    chat_area_->appendPlainText(
+      QString("[%1] %2").arg(QDateTime::currentDateTime().toString("HH:mm:ss"),
+                             QString::fromStdString(message)));
+
+    if (success) {
+      // Kanal-Liste anfordern
+      session_->request_channel_list();
+    }
+  });
+
+  session_->set_channel_update_callback([this](const Session::ChannelList& channels) {
+    update_channel_list(channels);
+    chat_area_->appendPlainText(
+      QString("[%1] Kanal-Liste aktualisiert (%2 Kanäle)")
+        .arg(QDateTime::currentDateTime().toString("HH:mm:ss"),
+             QString::number(channels.size())));
+  });
+
+  session_->set_user_update_callback([this](uint32_t channel_id, const Session::UserList& users) {
+    update_user_list(channel_id, users);
+  });
+
+  session_->set_text_message_callback([this](uint32_t from_user_id, const std::string& text) {
+    (void)from_user_id;
+    chat_area_->appendPlainText(
+      QString("[%1] Nachricht: %2").arg(QDateTime::currentDateTime().toString("HH:mm:ss"),
+                                         QString::fromStdString(text)));
+  });
+
+  session_->set_voice_data_callback([this](std::span<const uint8_t> voice_data) {
+    (void)voice_data;
+    // TODO: Voice-Daten an Audio-Pipeline weiterleiten
+  });
+
+  // Verbindung herstellen
+  session_->connect("localhost", 64738);
+  set_connection_status("Verbinde...");
+  chat_area_->appendPlainText(
+    QString("[%1] Verbinde mit localhost:64738").arg(QDateTime::currentDateTime().toString("HH:mm:ss")));
 }
 
 void MainWindow::on_disconnect() {
