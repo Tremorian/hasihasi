@@ -1,0 +1,203 @@
+// SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#pragma once
+
+#include <QObject>
+#include <QString>
+#include <QImage>
+#include <QRect>
+#include <vector>
+#include <map>
+#include <mutex>
+#include <functional>
+
+namespace hh::client {
+
+// Screenshare: X11/Wayland, Video-Codec, Qualität, Framerate
+class ScreenShareManager : public QObject {
+  Q_OBJECT
+
+public:
+  explicit ScreenShareManager(QObject* parent = nullptr);
+  ~ScreenShareManager() override = default;
+
+  // Nicht kopierbar, bewegbar
+  ScreenShareManager(const ScreenShareManager&) = delete;
+  ScreenShareManager& operator=(const ScreenShareManager&) = delete;
+  ScreenShareManager(ScreenShareManager&&) noexcept;
+  ScreenShareManager& operator=(ScreenShareManager&&) noexcept;
+
+  // Display-Server
+  enum class DisplayServer {
+    NONE,
+    X11,
+    WAYLAND
+  };
+  Q_ENUM(DisplayServer)
+
+  DisplayServer display_server() const;
+
+  // Bildschirm-Erkennung
+  struct ScreenInfo {
+    QString name;
+    int id;
+    int width;
+    int height;
+    int dpi;
+    QRect geometry;
+  };
+
+  std::vector<ScreenInfo> get_available_screens() const;
+  ScreenInfo* get_primary_screen();
+  const ScreenInfo* get_primary_screen() const;
+
+  // Video-Codec
+  enum class VideoCodec {
+    NONE,
+    VP8,
+    VP9,
+    H264
+  };
+  Q_ENUM(VideoCodec)
+
+  VideoCodec video_codec() const;
+  bool set_video_codec(VideoCodec codec);
+
+  // Qualität
+  enum class Quality {
+    LOW,
+    MEDIUM,
+    HIGH,
+    ULTRA
+  };
+  Q_ENUM(Quality)
+
+  Quality quality() const;
+  bool set_quality(Quality q);
+
+  // Framerate
+  enum class Framerate {
+    FPS_15,
+    FPS_30,
+    FPS_60
+  };
+  Q_ENUM(Framerate)
+
+  Framerate framerate() const;
+  bool set_framerate(Framerate fr);
+
+  // Region Capture
+  struct CaptureRegion {
+    int x;
+    int y;
+    int width;
+    int height;
+  };
+
+  CaptureRegion get_capture_region() const;
+  void set_capture_region(const CaptureRegion& region);
+  void set_full_screen_capture(bool full);
+
+  // Share-Status
+  enum class ShareStatus {
+    IDLE,
+    CAPTURING,
+    STREAMING,
+    PAUSED,
+    ERROR
+  };
+  Q_ENUM(ShareStatus)
+
+  ShareStatus status() const;
+
+  // Share-Start/Stop
+  bool start_share(int screen_id = 0);
+  bool stop_share();
+  bool pause_share();
+  bool resume_share();
+
+  // Bild-Erfassung
+  struct CapturedFrame {
+    QImage image;
+    qint64 timestamp; // µs
+    int width;
+    int height;
+  };
+
+  CapturedFrame get_last_frame() const;
+
+  // Bitrate
+  void set_bitrate(int kbps); // 0 = auto
+  int bitrate() const;
+
+  // Qualitätseinstellungen
+  struct QualitySettings {
+    int width;
+    int height;
+    int bitrate_kbps;
+    int max_framerate;
+    int keyframe_interval; // Sekunden
+  };
+
+  QualitySettings get_quality_settings() const;
+
+  // Statistik
+  struct Stats {
+    size_t frames_captured;
+    size_t frames_sent;
+    size_t frames_dropped;
+    qint64 total_capture_time_ms;
+    double average_bitrate_kbps;
+    double average_framerate;
+  };
+
+  Stats get_stats() const;
+  void reset_stats();
+
+  // Callbacks
+  using FrameCallback = std::function<void(const CapturedFrame& frame)>;
+  using ErrorCallback = std::function<void(const QString& error)>;
+
+  void set_frame_callback(FrameCallback callback);
+  void set_error_callback(ErrorCallback callback);
+
+signals:
+  void share_started(int screen_id);
+  void share_stopped();
+  void share_paused();
+  void share_resumed();
+  void frame_captured(const CapturedFrame& frame);
+  void error_occurred(const QString& error);
+  void quality_changed(Quality q);
+  void codec_changed(VideoCodec codec);
+  void framerate_changed(Framerate fr);
+
+private slots:
+  void on_capture_timer();
+
+private:
+  DisplayServer display_server_ = DisplayServer::NONE;
+  VideoCodec video_codec_ = VideoCodec::VP8;
+  Quality quality_ = Quality::MEDIUM;
+  Framerate framerate_ = Framerate::FPS_30;
+  ShareStatus status_ = ShareStatus::IDLE;
+  
+  CaptureRegion capture_region_ = {0, 0, 0, 0};
+  bool full_screen_capture_ = true;
+  
+  std::vector<ScreenInfo> screens_;
+  int active_screen_id_ = 0;
+  
+  CapturedFrame last_frame_;
+  int bitrate_kbps_ = 0; // 0 = auto
+  
+  Stats stats_;
+  
+  FrameCallback frame_callback_;
+  ErrorCallback error_callback_;
+  
+  mutable std::mutex mutex_;
+};
+
+} // namespace hh::client
