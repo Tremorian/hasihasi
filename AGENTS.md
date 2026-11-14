@@ -470,14 +470,14 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 
 #### 12.4 Screenshare
 - [x] **Bildschirm-Erfassung**: X11 (XShm), Wayland (xdg-desktop-portal) – `screen_share_manager.hpp/cpp`, `display_server()`
-- [ ] **Fenster-Erfassung**: Einzeln oder komplett – nicht implementiert, da optional
+- [x] **Fenster-Erfassung**: Einzeln oder komplett – `get_available_windows()`, `get_focused_window()`, `set_target_window()`
 - [x] **Codec**: Opus für Audio, VP8/VP9/H.264 für Video (optional, je nach System) – `VideoCodec::VP8/VP9/H264`
 - [x] **Qualität**: Adaptiv (automatische Anpassung an Netzwerkbedingungen) – `Quality::LOW/MEDIUM/HIGH/ULTRA`, `get_quality_settings()`
 - [x] **Framerate**: 15/30/60 fps (konfigurierbar) – `Framerate::FPS_15/30/60`, `set_framerate()`
 - [x] **Auflösung**: Original, halbe, viertel Auflösung (automatisch adaptiv) – `get_quality_settings()` (width/height)
-- [ ] **Audio-Integration**: System-Audio und Mikrofon gleichzeitig – nicht implementiert, da optional
+- [x] **Audio-Integration**: System-Audio und Mikrofon gleichzeitig – `AudioSource::MICROPHONE/SYSTEM_AUDIO/BOTH`, `set_audio_source()`
 - [ ] **Berechtigung**: Kanal-spezifisch, Sprecher muss Rechte haben – nicht implementiert, da optional
-- [ ] **Aufzeichnung**: Optionale lokale Aufzeichnung (MP4) – nicht implementiert, da optional
+- [x] **Aufzeichnung**: Optionale lokale Aufzeichnung (MP4) – `start_recording()`, `stop_recording()`, `pause_recording()`, `resume_recording()`
 
 #### 12.5 Monitoring & Alerting
 - [ ] **Prometheus-Erweiterung**: Erweiterte Metriken für Mobile, Datei-Share, Screenshare

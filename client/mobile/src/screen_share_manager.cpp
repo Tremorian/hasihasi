@@ -36,6 +36,17 @@ ScreenShareManager::ScreenShareManager(QObject* parent)
     info.geometry = screens[i]->geometry();
     screens_.push_back(info);
   }
+  
+  // Fenster-Erkennung (simuliert)
+  // In einer echten Implementierung würde hier X11/XCB oder Wayland verwendet
+  WindowInfo info;
+  info.name = "HasiHasi";
+  info.id = 123456;
+  info.x = 0;
+  info.y = 0;
+  info.width = 1280;
+  info.height = 720;
+  windows_.push_back(info);
 }
 
 ScreenShareManager::ScreenShareManager(ScreenShareManager&& other) noexcept
@@ -127,6 +138,35 @@ const ScreenShareManager::ScreenInfo* ScreenShareManager::get_primary_screen() c
   return nullptr;
 }
 
+// ── Fenster-Erfassung ────────────────────────────────────────────────
+
+std::vector<ScreenShareManager::WindowInfo> ScreenShareManager::get_available_windows() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return windows_;
+}
+
+ScreenShareManager::WindowInfo* ScreenShareManager::get_focused_window() {
+  std::lock_guard<std::mutex> lock(mutex_);
+  if (!windows_.empty()) {
+    return &windows_[0];
+  }
+  return nullptr;
+}
+
+const ScreenShareManager::WindowInfo* ScreenShareManager::get_focused_window() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  if (!windows_.empty()) {
+    return &windows_[0];
+  }
+  return nullptr;
+}
+
+bool ScreenShareManager::set_target_window(unsigned long window_id) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  target_window_id_ = window_id;
+  return true;
+}
+
 // ── Video-Codec ──────────────────────────────────────────────────────
 
 ScreenShareManager::VideoCodec ScreenShareManager::video_codec() const {
@@ -197,6 +237,92 @@ void ScreenShareManager::set_capture_region(const CaptureRegion& region) {
 void ScreenShareManager::set_full_screen_capture(bool full) {
   std::lock_guard<std::mutex> lock(mutex_);
   full_screen_capture_ = full;
+}
+
+// ── Audio-Integration ────────────────────────────────────────────────
+
+ScreenShareManager::AudioSource ScreenShareManager::audio_source() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return audio_source_;
+}
+
+bool ScreenShareManager::set_audio_source(AudioSource source) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  if (audio_source_ != source) {
+    audio_source_ = source;
+    audio_enabled_ = (source != AudioSource::NONE);
+    emit audio_source_changed(source);
+    return true;
+  }
+  return false;
+}
+
+bool ScreenShareManager::is_audio_enabled() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return audio_enabled_;
+}
+
+// ── Aufzeichnung ─────────────────────────────────────────────────────
+
+ScreenShareManager::RecordStatus ScreenShareManager::record_status() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return record_status_;
+}
+
+bool ScreenShareManager::start_recording(const QString& file_path) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  if (record_status_ != RecordStatus::IDLE) {
+    return false;
+  }
+  
+  recorded_file_path_ = file_path;
+  record_status_ = RecordStatus::RECORDING;
+  
+  emit recording_started(file_path);
+  return true;
+}
+
+bool ScreenShareManager::stop_recording() {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  if (record_status_ == RecordStatus::IDLE) {
+    return false;
+  }
+  
+  record_status_ = RecordStatus::IDLE;
+  emit recording_stopped();
+  return true;
+}
+
+bool ScreenShareManager::pause_recording() {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  if (record_status_ != RecordStatus::RECORDING) {
+    return false;
+  }
+  
+  record_status_ = RecordStatus::PAUSED;
+  emit recording_paused();
+  return true;
+}
+
+bool ScreenShareManager::resume_recording() {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  if (record_status_ != RecordStatus::PAUSED) {
+    return false;
+  }
+  
+  record_status_ = RecordStatus::RECORDING;
+  emit recording_resumed();
+  return true;
+}
+
+QString ScreenShareManager::get_recorded_file_path() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return recorded_file_path_;
 }
 
 // ── Share-Status ─────────────────────────────────────────────────────

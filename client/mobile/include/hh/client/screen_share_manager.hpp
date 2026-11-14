@@ -52,6 +52,21 @@ public:
   ScreenInfo* get_primary_screen();
   const ScreenInfo* get_primary_screen() const;
 
+  // Fenster-Erfassung
+  struct WindowInfo {
+    QString name;
+    unsigned long id;
+    int x;
+    int y;
+    int width;
+    int height;
+  };
+
+  std::vector<WindowInfo> get_available_windows() const;
+  WindowInfo* get_focused_window();
+  const WindowInfo* get_focused_window() const;
+  bool set_target_window(unsigned long window_id);
+
   // Video-Codec
   enum class VideoCodec {
     NONE,
@@ -98,6 +113,35 @@ public:
   CaptureRegion get_capture_region() const;
   void set_capture_region(const CaptureRegion& region);
   void set_full_screen_capture(bool full);
+
+  // Audio-Integration
+  enum class AudioSource {
+    NONE,
+    MICROPHONE,
+    SYSTEM_AUDIO,
+    BOTH
+  };
+  Q_ENUM(AudioSource)
+
+  AudioSource audio_source() const;
+  bool set_audio_source(AudioSource source);
+  bool is_audio_enabled() const;
+
+  // Aufzeichnung
+  enum class RecordStatus {
+    IDLE,
+    RECORDING,
+    PAUSED,
+    ERROR
+  };
+  Q_ENUM(RecordStatus)
+
+  RecordStatus record_status() const;
+  bool start_recording(const QString& file_path);
+  bool stop_recording();
+  bool pause_recording();
+  bool resume_recording();
+  QString get_recorded_file_path() const;
 
   // Share-Status
   enum class ShareStatus {
@@ -150,6 +194,7 @@ public:
     qint64 total_capture_time_ms;
     double average_bitrate_kbps;
     double average_framerate;
+    qint64 recording_duration_ms;
   };
 
   Stats get_stats() const;
@@ -172,6 +217,11 @@ signals:
   void quality_changed(Quality q);
   void codec_changed(VideoCodec codec);
   void framerate_changed(Framerate fr);
+  void audio_source_changed(AudioSource source);
+  void recording_started(const QString& file_path);
+  void recording_stopped();
+  void recording_paused();
+  void recording_resumed();
 
 private slots:
   void on_capture_timer();
@@ -188,6 +238,15 @@ private:
   
   std::vector<ScreenInfo> screens_;
   int active_screen_id_ = 0;
+  
+  std::vector<WindowInfo> windows_;
+  unsigned long target_window_id_ = 0;
+  
+  AudioSource audio_source_ = AudioSource::NONE;
+  bool audio_enabled_ = false;
+  
+  RecordStatus record_status_ = RecordStatus::IDLE;
+  QString recorded_file_path_;
   
   CapturedFrame last_frame_;
   int bitrate_kbps_ = 0; // 0 = auto
