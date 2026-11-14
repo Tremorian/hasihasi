@@ -16,3 +16,21 @@ target_compile_features(hasihasi-cli PRIVATE cxx_std_20)
 install(TARGETS hasihasi-cli
   RUNTIME DESTINATION bin
 )
+
+# ── Loopback-Testprogramm ─────────────────────────────────────────────
+
+add_executable(hasihasi-loopback
+  loopback.cpp
+)
+
+target_link_libraries(hasihasi-loopback
+  PRIVATE
+    hh_common::hh_common
+    hh_audio::hh_audio
+)
+
+target_compile_features(hasihasi-loopback PRIVATE cxx_std_20)
+
+install(TARGETS hasihasi-loopback
+  RUNTIME DESTINATION bin
+)

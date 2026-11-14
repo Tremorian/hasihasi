@@ -7,6 +7,7 @@ add_executable(unit_tests
   main.cpp
   test_framing.cpp
   test_ringbuffer.cpp
+  test_loopback.cpp
 )
 
 target_link_libraries(unit_tests
