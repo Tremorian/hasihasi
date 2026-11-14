@@ -1,0 +1,31 @@
+# HasiHasi – Flatpak Manifest
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+{
+  "app-id": "de.hasihasi.hasihasi",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "24.08",
+  "sdk": "org.freedesktop.Sdk",
+  "command": "hasihasi",
+  "separate-locales": false,
+
+  "modules": [
+    {
+      "name": "hasihasi",
+      "buildsystem": "cmake",
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/Tremorian/hasihasi.git",
+          "tag": "v0.1.0"
+        }
+      ],
+      "config-opts": [
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DHASIHASI_BUILD_SERVER=OFF",
+        "-DHASIHASI_BUILD_TOOLS=OFF"
+      ]
+    }
+  ]
+}

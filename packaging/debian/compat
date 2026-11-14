@@ -1,0 +1,2 @@
+# HasiHasi – Debian compat
+debhelper-compat (= 13)

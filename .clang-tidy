@@ -1,0 +1,21 @@
+---
+Checks: >
+  modernize-*,
+  bugprone-*,
+  performance-*,
+  cppcoreguidelines-*,
+  readability-*,
+  -modernize-use-trailing-return-type,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -readability-avoid-unconditional-preprocessor-if
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false
+FormatStyle: file
+CheckOptions:
+  - Key: modernize-use-nullptr.Value
+    Value: nullptr
+  - Key: cppcoreguidelines-pro-bounds-array-to-pointer-decay.EnableIntegerComparison
+    Value: false
+  - Key: readability-identifier-naming.NamespaceCase
+    Value: camelCase
+...

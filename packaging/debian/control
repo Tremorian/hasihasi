@@ -1,0 +1,55 @@
+# HasiHasi – Debian/Ubuntu packaging
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# debian/control
+Source: hasihasi
+Section: net
+Priority: optional
+Maintainer: Nils Pankoke <tremorian@mailbox.org>
+Build-Depends:
+ cmake (>= 3.25),
+ debhelper-compat (= 13),
+ libspdlog-dev,
+ libtomlplusplus-dev,
+ libasio-dev,
+ libopus-dev,
+ libpipewire-0.3-dev,
+ libssl-dev,
+ libprotobuf-dev,
+ protobuf-compiler,
+ libsqlite3-dev,
+ libcatch2-dev,
+ libqt6widgets6-dev,
+ qtbase5-dev (>= 5.15),
+Standards-Version: 4.6
+Rules-Requires-Root: no
+Vcs-Browser: https://github.com/Tremorian/hasihasi
+Vcs-Git: https://github.com/Tremorian/hasihasi.git
+
+Package: hasihasi
+Architecture: any
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+ libqt6widgets6,
+ libopus0,
+ libpipewire-0.3-0,
+ libssl3,
+ libspdlog1,
+Description: Low-Latency-Voice-Chat für Linux-Gamer (Client)
+ HasiHasi ist ein Voice-Chat mit Fokus auf minimale Latenz.
+ Dieser Paket enthält den Qt6-GUI-Client.
+
+Package: hasihasi-server
+Architecture: any
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+ libopus0,
+ libpipewire-0.3-0,
+ libssl3,
+ libspdlog1,
+Description: Low-Latency-Voice-Chat für Linux-Gamer (Server)
+ HasiHasi ist ein Voice-Chat mit Fokus auf minimale Latenz.
+ Dieses Paket enthält den Server, hasihasi-cli und systemd-Unit.

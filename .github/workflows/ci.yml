@@ -1,0 +1,101 @@
+# HasiHasi – CI/CD Pipeline
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CC: gcc
+  CXX: g++
+
+jobs:
+  # ── Build & Test (GCC) ──────────────────────────────────────────────
+  build-gcc:
+    name: Build & Test (GCC)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build \
+            libspdlog-dev libtoml++1-dev libasio-dev \
+            libopus-dev libpipewire-0.3-dev libssl-dev \
+            libprotobuf-dev protobuf-compiler libsqlite3-dev \
+            libcatch2-dev libqt6widgets6-dev qtbase6-dev
+
+      - name: Configure (Debug)
+        run: cmake --preset debug
+
+      - name: Build
+        run: cmake --build --preset debug
+
+      - name: Test
+        run: ctest --preset debug --output-on-failure
+
+  # ── Build & Test (Clang + ASan) ─────────────────────────────────────
+  build-clang-asan:
+    name: Build & Test (Clang ASan)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build \
+            clang lld \
+            libspdlog-dev libtoml++1-dev libasio-dev \
+            libopus-dev libpipewire-0.3-dev libssl-dev \
+            libprotobuf-dev protobuf-compiler libsqlite3-dev \
+            libcatch2-dev libqt6widgets6-dev qtbase6-dev
+
+      - name: Configure (ASan)
+        run: cmake --preset asan
+
+      - name: Build
+        run: cmake --build --preset asan
+
+      - name: Test (ASan)
+        run: |
+          export ASAN_OPTIONS=detect_leaks=0
+          ctest --preset asan --output-on-failure
+
+  # ── clang-format Check ──────────────────────────────────────────────
+  lint-format:
+    name: clang-format
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get install -y clang-format-18
+
+      - name: Check formatting
+        run: |
+          find . -name '*.hpp' -o -name '*.cpp' -o -name '*.h' | \
+            xargs clang-format-18 --dry-run --Werror --style=file
+
+  # ── reuse lint (Lizenzprüfung) ──────────────────────────────────────
+  lint-reuse:
+    name: REUSE lint
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install reuse
+        run: pipx install reuse
+
+      - name: REUSE lint
+        run: reuse lint

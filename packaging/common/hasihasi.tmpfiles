@@ -1,0 +1,12 @@
+# HasiHasi – tmpfiles.d Konfiguration
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Runtime-Verzeichnis
+d /run/hasihasi 0755 hasihasi hasihasi - -
+
+# State-Verzeichnis
+d /var/lib/hasihasi 0755 hasihasi hasihasi - -
+
+# Log-Verzeichnis
+d /var/log/hasihasi 0755 hasihasi hasihasi - -

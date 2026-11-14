@@ -1,0 +1,37 @@
+# HasiHasi – systemd service unit
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[Unit]
+Description=HasiHasi Low-Latency Voice Chat Server
+Documentation=https://hasihasi.de
+After=network.target
+
+[Service]
+Type=simple
+User=hasihasi
+Group=hasihasi
+ExecStart=/usr/bin/hasihasi-server --config /etc/hasihasi/server.toml
+Restart=on-failure
+RestartSec=5
+
+# Sicherheit
+ProtectSystem=strict
+ProtectHome=yes
+NoNewPrivileges=yes
+PrivateTmp=yes
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+# Pfade
+RuntimeDirectory=hasihasi
+StateDirectory=hasihasi
+ConfigurationDirectory=hasihasi
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hasihasi-server
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+# HasiHasi – debian/rules
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	cmake -B build -DCMAKE_BUILD_TYPE=Release
+	cmake --build build -j $$(nproc)
+
+override_dh_auto_install:
+	DESTDIR=$$(pwd)/debian/hasihasi cmake --install build

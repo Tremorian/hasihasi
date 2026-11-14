@@ -1,0 +1,9 @@
+# HasiHasi – Debian changelog
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+hasihasi (0.1.0-1) unstable; urgency=medium
+
+  * Initial release.
+
+ -- Nils Pankoke <tremorian@mailbox.org>  Mon, 01 Jan 2026 00:00:00 +0000

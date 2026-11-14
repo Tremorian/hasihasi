@@ -1,0 +1,18 @@
+# HasiHasi – Build-Container für Arch Linux
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+FROM archlinux:base
+
+RUN pacman -Syu --noconfirm \
+    base-devel cmake ninja git \
+    spdlog tomlplusplus asio opus pipewire openssl \
+    protobuf sqlite catch2 qt6-base \
+    && pacman -Sc --noconfirm
+
+WORKDIR /src
+COPY . /src
+
+RUN chmod +x packaging/build-packages.sh
+
+CMD ["bash", "packaging/build-packages.sh"]

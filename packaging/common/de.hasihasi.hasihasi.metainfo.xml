@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<component type="desktop-application">
+  <id>de.hasihasi.hasihasi</id>
+
+  <name>HasiHasi</name>
+  <summary>Low-Latency-Voice-Chat für Linux-Gamer</summary>
+  <developer_name>Nils Pankoke</developer_name>
+
+  <url type="homepage">https://hasihasi.de</url>
+  <url type="bugtracker">https://github.com/Tremorian/hasihasi/issues</url>
+  <url type="donation">https://hasihasi.de</url>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <description>
+    <p>HasiHasi ist ein Low-Latency-Voice-Chat für Linux-Gamer.
+       Ziel ist eine Mund-zu-Ohr-Latenz von unter 50 ms im LAN
+       und unter 80 ms über typisches Internet.</p>
+    <p>Features:</p>
+    <ul>
+      <li>Höchste Priorität auf minimale Latenz</li>
+      <li>Verschlüsselte Audio- und Verbindungen (TLS 1.3, AES-256-GCM)</li>
+      <li>Opus-Codec mit 48 kHz, 10-ms-Frames</li>
+      <li>PipeWire-Integration für natives Audio unter Linux</li>
+      <li>Rauschunterdrückung (RNNoise)</li>
+      <li>Push-to-Talk und Voice-Activation</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">de.hasihasi.hasihasi.desktop</launchable>
+  <icon type="remote">https://hasihasi.de/icon.png</icon>
+
+  <categories>
+    <category>VoiceChat</category>
+    <category>Networking</category>
+    <category>Game</category>
+  </categories>
+
+  <provides>
+    <id>de.hasihasi.hasihasi.desktop</id>
+  </provides>
+</component>

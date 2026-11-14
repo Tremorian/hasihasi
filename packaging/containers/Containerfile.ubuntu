@@ -1,0 +1,21 @@
+# HasiHasi – Build-Container für Ubuntu 24.04 (Noble)
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+FROM ubuntu:24.04
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake ninja-build git \
+    libspdlog-dev libtoml++1-dev libasio-dev \
+    libopus-dev libpipewire-0.3-dev libssl-dev \
+    libprotobuf-dev protobuf-compiler libsqlite3-dev \
+    libqt6widgets6-dev qtbase6-dev \
+    dh-make debhelper lintian \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+COPY . /src
+
+RUN chmod +x packaging/build-packages.sh
+
+CMD ["bash", "packaging/build-packages.sh"]

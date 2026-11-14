@@ -1,0 +1,18 @@
+# HasiHasi – desktop file
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[Desktop Entry]
+Type=Application
+Name=HasiHasi
+Comment=Low-Latency-Voice-Chat für Linux-Gamer
+Exec=hasihasi %u
+Icon=de.hasihasi.hasihasi
+Terminal=false
+Categories=VoiceChat;Networking;Game;
+MimeType=x-scheme-handler/hasihasi;
+StartupNotify=false
+X-KDE-Protocols=hasihasi;
+
+# Flatpak
+DBusActivatable=true

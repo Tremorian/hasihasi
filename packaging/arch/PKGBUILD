@@ -1,0 +1,58 @@
+# HasiHasi – Arch Linux PKGBUILD
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+_pkgname=hasihasi
+pkgname=("$_pkgname" "$_pkgname-server" "$_pkgname-cli")
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Low-Latency-Voice-Chat für Linux-Gamer"
+arch=('x86_64' 'aarch64')
+url="https://hasihasi.de"
+license=('GPL3')
+makedepends=('cmake' 'gcc' 'spdlog' 'tomlplusplus' 'asio' 'opus'
+             'pipewire' 'openssl' 'protobuf' 'sqlite' 'catch2' 'qt6-base')
+source=("https://github.com/Tremorian/$_pkgname/archive/v$pkgver.tar.gz")
+sha256sums=('SKIP')  # Wird vor Release mit echtem Hash ersetzt
+
+build() {
+  cd "$_pkgname-$pkgver"
+  cmake -B build -DCMAKE_BUILD_TYPE=Release
+  cmake --build build -j$(nproc)
+}
+
+package_hasihasi() {
+  depends=('qt6-base' 'opus' 'pipewire' 'openssl' 'spdlog')
+  optdepends=('rnnoise: Rauschunterdrückung')
+
+  cd "$_pkgname-$pkgver"
+  cmake --install build --prefix /usr --component client
+
+  install -Dm644 packaging/common/de.hasihasi.hasihasi.desktop \
+    "$pkgdir/usr/share/applications/de.hasihasi.hasihasi.desktop"
+  install -Dm644 packaging/common/de.hasihasi.hasihasi.metainfo.xml \
+    "$pkgdir/usr/share/metainfo/de.hasihasi.hasihasi.metainfo.xml"
+}
+
+package_hasihasi-server() {
+  depends=('opus' 'pipewire' 'openssl' 'spdlog' 'sqlite')
+
+  cd "$_pkgname-$pkgver"
+  cmake --install build --prefix /usr --component server
+
+  install -Dm644 packaging/common/hasihasi-server.service \
+    "$pkgdir/usr/lib/systemd/system/hasihasi-server.service"
+  install -Dm644 packaging/common/server.toml \
+    "$pkgdir/etc/hasihasi/server.toml"
+  install -Dm644 packaging/common/hasihasi.sysusers \
+    "$pkgdir/usr/lib/sysusers.d/hasihasi.conf"
+  install -Dm644 packaging/common/hasihasi.tmpfiles \
+    "$pkgdir/usr/lib/tmpfiles.d/hasihasi.conf"
+}
+
+package_hasihasi-cli() {
+  depends=('openssl' 'spdlog')
+
+  cd "$_pkgname-$pkgver"
+  cmake --install build --prefix /usr --component cli
+}

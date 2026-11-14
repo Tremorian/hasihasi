@@ -1,0 +1,6 @@
+# HasiHasi – sysusers.d Konfiguration
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Systembenutzer und -gruppe für hasihasi-server
+u hasihasi - "HasiHasi Voice Chat Server" /nonexistent /usr/sbin/nologin

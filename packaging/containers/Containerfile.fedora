@@ -1,0 +1,20 @@
+# HasiHasi – Build-Container für Fedora 41
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+FROM fedora:41
+
+RUN dnf install -y \
+    gcc-c++ cmake ninja-build git \
+    spdlog-devel tomlplusplus-devel asio-devel \
+    opus-devel pipewire-devel openssl-devel \
+    protobuf-devel sqlite-devel catch2-devel \
+    qt6-qtbase-devel rpm-build rpmlint \
+    && dnf clean all
+
+WORKDIR /src
+COPY . /src
+
+RUN chmod +x packaging/build-packages.sh
+
+CMD ["bash", "packaging/build-packages.sh"]

@@ -1,0 +1,150 @@
+// SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+syntax = "proto3";
+
+package hasihasi.proto.v1;
+
+option optimize_for = SPEED;
+
+// ── Grundlegende Typen ────────────────────────────────────────────────
+
+enum ErrorType {
+  ERROR_NONE = 0;
+  ERROR_INVALID_STATE = 1;
+  ERROR_UNAUTHORIZED = 2;
+  ERROR_RATE_LIMITED = 3;
+  ERROR_PROTOCOL_VIOLATION = 4;
+  ERROR_SERVER_FULL = 5;
+  ERROR_CHANNEL_LIMIT = 6;
+  ERROR_INVALID_CERTIFICATE = 7;
+}
+
+// ── Handshake & Authentifizierung ─────────────────────────────────────
+
+message Hello {
+  uint32 protocol_version = 1;
+  string client_version = 2;
+  optional string certificate_fingerprint = 3;
+}
+
+message Welcome {
+  uint32 server_version = 1;
+  uint32 server_tick = 2;
+  ServerSettings settings = 3;
+}
+
+message ServerSettings {
+  uint32 max_users = 1;
+  uint32 max_bandwidth = 2;
+  uint32 default_port = 3;
+  bool allow_registration = 4;
+  string server_name = 5;
+}
+
+message Authenticate {
+  bytes certificate = 1;
+  string username = 2;
+}
+
+message AuthResult {
+  ErrorType error = 1;
+  uint32 user_id = 2;
+  string username = 3;
+}
+
+// ── Kanalbaum ─────────────────────────────────────────────────────────
+
+message Channel {
+  uint32 channel_id = 1;
+  uint32 parent_id = 2;
+  string name = 3;
+  uint32 max_users = 4;
+  bool temporary = 5;
+  string description = 6;
+}
+
+message ChannelUpdate {
+  Channel channel = 1;
+}
+
+message ChannelList {
+  repeated Channel channels = 1;
+}
+
+// ── Nutzer ────────────────────────────────────────────────────────────
+
+message User {
+  uint32 user_id = 1;
+  string username = 2;
+  uint32 channel_id = 3;
+  bool muted = 4;
+  bool deafened = 5;
+  bool suppressing = 6;
+  bytes certificate_fingerprint = 7;
+}
+
+message UserUpdate {
+  User user = 1;
+}
+
+message UserList {
+  repeated User users = 1;
+}
+
+// ── Textnachrichten ───────────────────────────────────────────────────
+
+message TextMessage {
+  uint32 target_id = 1;        // 0 = Kanal, >0 = Nutzer
+  enum TargetType {
+    CHANNEL = 0;
+    USER = 1;
+  }
+  TargetType target_type = 2;
+  string text = 3;
+}
+
+// ── Steuerbefehle ─────────────────────────────────────────────────────
+
+message KickRequest {
+  uint32 user_id = 1;
+  string reason = 2;
+}
+
+message BanRequest {
+  string ip_address = 1;
+  uint32 duration_seconds = 2;
+  string reason = 3;
+}
+
+message ServerMessage {
+  string message = 1;
+}
+
+// ── Status & Statistiken ──────────────────────────────────────────────
+
+message ServerStats {
+  uint32 user_count = 1;
+  uint32 channel_count = 2;
+  uint64 bandwidth_in = 3;
+  uint64 bandwidth_out = 4;
+  uint64 uptime_seconds = 5;
+}
+
+// ── Nachrichten-Typen (Control-Kanal) ─────────────────────────────────
+
+enum MessageType {
+  MSG_HELLO = 0;
+  MSG_WELCOME = 1;
+  MSG_AUTHENTICATE = 2;
+  MSG_AUTH_RESULT = 3;
+  MSG_CHANNEL_LIST = 4;
+  MSG_CHANNEL_UPDATE = 5;
+  MSG_USER_LIST = 6;
+  MSG_USER_UPDATE = 7;
+  MSG_TEXT_MESSAGE = 8;
+  MSG_KICK = 9;
+  MSG_BAN = 10;
+  MSG_SERVER_MESSAGE = 11;
+  MSG_SERVER_STATS = 12;
+}

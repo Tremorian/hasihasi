@@ -1,0 +1,49 @@
+# HasiHasi – Beispiel-Konfiguration für den Server
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Kopiere diese Datei nach /etc/hasihasi/server.toml
+# und passe sie an deine Bedürfnisse an.
+
+[server]
+# Name des Servers (wird Clients angezeigt)
+name = "HasiHasi Server"
+
+# Standard-Ports
+control_port = 64738
+voice_port = 64738
+
+# Maximale Nutzer und Kanäle
+max_users = 100
+max_channels = 50
+
+# Bandbreite pro Nutzer (in kbit/s)
+max_bandwidth_per_user = 128
+
+# Authentifizierung
+allow_guests = false
+require_certificate = true
+
+# Zertifikate (wenn nicht Let's Encrypt)
+# certificate = "/etc/hasihasi/cert.pem"
+# private_key = "/etc/hasihasi/key.pem"
+
+# Let's Encrypt (optional)
+# letsencrypt_email = "admin@hasihasi.de"
+# letsencrypt_dir = "/var/lib/hasihasi/letsencrypt"
+
+[database]
+# SQLite-Datenbank
+path = "/var/lib/hasihasi/server.db"
+
+[logging]
+# Log-Datei
+file = "/var/log/hasihasi/server.log"
+# Log-Stufe: trace, debug, info, warn, error
+level = "info"
+
+[metrics]
+# Prometheus-Metriken (nur localhost)
+enabled = false
+port = 9100
+bind_address = "127.0.0.1"

@@ -1,0 +1,8 @@
+version = 1
+SPDX-PackageName = "hasihasi"
+SPDX-PackageDownloadLocation = "https://hasihasi.de"
+
+files = [
+  { path = "releases", exclude_from_archiving = true },
+  { path = "client/resources/logo_placeholder.svg", precedence = "aggregate" },
+]

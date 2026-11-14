@@ -1,0 +1,42 @@
+# Build-Verzeichnisse
+build/
+_build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+*.ninja
+*.pc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Release-Pakete (Entwicklungs-Builds)
+releases/*/SHA256SUMS*
+releases/*/*.deb
+releases/*/*.rpm
+releases/*/*.pkg.tar.zst
+releases/*/BUILDINFO.txt
+releases/*/*.debug
+releases/*/*-debuginfo*
+
+# Test-Outputs
+tests/*_tests
+tests/test_*
+!tests/CMakeLists.txt
+
+# Protobuf-Generierung (nur Quell-.proto wird committet)
+# proto/hh_proto.pb.cc
+# proto/hh_proto.pb.h
+# proto/hh_proto.grpc.pb.cc
+# proto/hh_proto.grpc.pb.h
