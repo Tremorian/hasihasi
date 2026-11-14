@@ -17,6 +17,7 @@ add_executable(unit_tests
   test_latency_test.cpp
   test_reconnect_manager.cpp
   test_acl.cpp
+  test_database.cpp
 )
 
 target_link_libraries(unit_tests
