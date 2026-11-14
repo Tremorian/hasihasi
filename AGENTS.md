@@ -459,14 +459,14 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Spracherkennung**: Deutsch, Englisch, Französisch, Spanisch – `Language::GERMAN`, `Language::ENGLISH`, `Language::FRENCH`, `Language::SPANISH`
 
 #### 12.3 Datei-Share
-- [ ] **Datei-Upload**: Bis 512 MB pro Datei (konfigurierbar)
-- [ ] **Datei-Download**: Mit Fortschrittsanzeige und Unterbrechungsmöglichkeit
-- [ ] **Datei-Verwaltung**: Liste hochgeladener Dateien pro Kanal
-- [ ] **Vorschau**: Bilder, Videos, Audio, PDF (nur lokal gerendert)
-- [ ] **Verschlüsselung**: Ende-zu-Ende-verschlüsselt (AES-256-GCM)
+- [x] **Datei-Upload**: Bis 512 MB pro Datei (konfigurierbar) – `file_share_manager.hpp/cpp`, `set_max_file_size_mb()`
+- [x] **Datei-Download**: Mit Fortschrittsanzeige und Unterbrechungsmöglichkeit – `upload_file()`, `download_file()`, `cancel_upload()`, `cancel_download()`
+- [x] **Datei-Verwaltung**: Liste hochgeladener Dateien pro Kanal – `get_channel_files()`, `get_all_files()`, `delete_file()`
+- [x] **Vorschau**: Bilder, Videos, Audio, PDF (nur lokal gerendert) – `get_preview_type()`, `get_preview_image()`
+- [x] **Verschlüsselung**: Ende-zu-Ende-verschlüsselt (AES-256-GCM) – `encrypt_file()`, `decrypt_file()`, `generate_encryption_key()`
 - [ ] **Viren-Scan**: ClamAV-Integration auf Server-Seite (optional)
-- [ ] **Hash-Prüfung**: SHA-256-Integritätsprüfung für Downloads
-- [ ] **Bandbreitenlimit**: Pro Nutzer und global konfigurierbar
+- [x] **Hash-Prüfung**: SHA-256-Integritätsprüfung für Downloads – `calculate_file_hash()`, `verify_file_hash()`
+- [x] **Bandbreitenlimit**: Pro Nutzer und global konfigurierbar – `set_upload_bandwidth_limit()`, `set_download_bandwidth_limit()`
 
 #### 12.4 Screenshare
 - [ ] **Bildschirm-Erfassung**: X11 (XShm), Wayland (xdg-desktop-portal)

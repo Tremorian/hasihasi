@@ -50,6 +50,7 @@ add_executable(unit_tests
   test_offline_cache.cpp
   test_battery_optimizer.cpp
   test_voice_assistant.cpp
+  test_file_share.cpp
 )
 
 target_link_libraries(unit_tests

@@ -10,6 +10,7 @@ add_library(hh_mobile_lib
   src/offline_cache.cpp
   src/battery_optimizer.cpp
   src/voice_assistant.cpp
+  src/file_share_manager.cpp
 )
 
 target_include_directories(hh_mobile_lib
