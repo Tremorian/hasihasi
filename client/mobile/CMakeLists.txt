@@ -12,6 +12,7 @@ add_library(hh_mobile_lib
   src/voice_assistant.cpp
   src/file_share_manager.cpp
   src/screen_share_manager.cpp
+  src/monitoring_manager.cpp
 )
 
 target_include_directories(hh_mobile_lib

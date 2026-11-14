@@ -52,6 +52,7 @@ add_executable(unit_tests
   test_voice_assistant.cpp
   test_file_share.cpp
   test_screen_share.cpp
+  test_monitoring.cpp
 )
 
 target_link_libraries(unit_tests

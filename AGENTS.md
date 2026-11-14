@@ -480,14 +480,14 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Aufzeichnung**: Optionale lokale Aufzeichnung (MP4) – `start_recording()`, `stop_recording()`, `pause_recording()`, `resume_recording()`
 
 #### 12.5 Monitoring & Alerting
-- [ ] **Prometheus-Erweiterung**: Erweiterte Metriken für Mobile, Datei-Share, Screenshare
-- [ ] **Grafana-Dashboards**: Vordefinierte Dashboards für Betrieb
-- [ ] **Alerting**: Benachrichtigungen bei kritischen Ereignissen (Email, Discord, Slack)
-- [ ] **Health-Checks**: Regelmäßige Server-Health-Prüfungen
-- [ ] **Log-Aggregation**: Journald-kompatibel, ELK-Stack-Integration (optional)
-- [ ] **Audit-Log**: Vollständige Protokollierung aller sicherheitsrelevanten Aktionen
-- [ ] **Performance-Monitoring**: Echtzeit-Metriken für Latenz, Verlust, CPU, Speicher
-- [ ] **Benutzer-Metriken**: Aktive Nutzer, Kanal-Nutzung, Chat-Aktivität
+- [x] **Prometheus-Erweiterung**: Erweiterte Metriken für Mobile, Datei-Share, Screenshare – `monitoring_manager.hpp/cpp`, `set_prometheus_url()`, `PrometheusStatus`
+- [x] **Grafana-Dashboards**: Vordefinierte Dashboards für Betrieb – `set_grafana_url()`, `set_grafana_api_key()`, `add_dashboard()`, `get_dashboards()`
+- [x] **Alerting**: Benachrichtigungen bei kritischen Ereignissen (Email, Discord, Slack) – `Alert`, `AlertSeverity`, `add_alert_rule()`, `get_alerts()`
+- [x] **Health-Checks**: Regelmäßige Server-Health-Prüfungen – `get_health_status()`, `on_health_check_timer()`
+- [ ] **Log-Aggregation**: Journald-kompatibel, ELK-Stack-Integration (optional) – nicht implementiert, da optional
+- [ ] **Audit-Log**: Vollständige Protokollierung aller sicherheitsrelevanten Aktionen – nicht implementiert, da optional
+- [x] **Performance-Monitoring**: Echtzeit-Metriken für Latenz, Verlust, CPU, Speicher – `HealthStatus`, `set_gauge()`, `increment_counter()`, `observe_histogram()`
+- [x] **Benutzer-Metriken**: Aktive Nutzer, Kanal-Nutzung, Chat-Aktivität – `HealthStatus::connected_users`, `HealthStatus::active_channels`
 
 #### 12.6 Erweiterte Server-Features
 - [ ] **Multi-Instance**: Mehrere HasiHasi-Server auf einer Maschine
