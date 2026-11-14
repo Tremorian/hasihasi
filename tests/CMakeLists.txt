@@ -24,6 +24,7 @@ add_executable(unit_tests
   test_whisper_shout.cpp
   test_voice_crypto.cpp
   test_cert_auth.cpp
+  test_prometheus_metrics.cpp
 )
 
 target_link_libraries(unit_tests
