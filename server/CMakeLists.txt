@@ -21,6 +21,7 @@ add_library(hh_server_lib
   ban_kick.cpp
   whisper_shout.cpp
   server_i18n.cpp
+  server_cluster.cpp
 )
 
 target_include_directories(hh_server_lib
