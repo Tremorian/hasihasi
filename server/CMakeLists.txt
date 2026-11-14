@@ -20,6 +20,7 @@ add_library(hh_server_lib
   text_chat.cpp
   ban_kick.cpp
   whisper_shout.cpp
+  server_i18n.cpp
 )
 
 target_include_directories(hh_server_lib
