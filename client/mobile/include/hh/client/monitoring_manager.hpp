@@ -164,12 +164,63 @@ public:
   Stats get_stats() const;
   void reset_stats();
 
+  // Log-Aggregation
+  enum class LogLevel {
+    DEBUG,
+    INFO,
+    WARNING,
+    ERROR,
+    CRITICAL
+  };
+  Q_ENUM(LogLevel)
+
+  struct LogEntry {
+    QString id;
+    QString message;
+    LogLevel level;
+    QString source;
+    QDateTime timestamp;
+    std::map<QString, QString> fields;
+  };
+
+  std::vector<LogEntry> get_logs(LogLevel level = LogLevel::INFO) const;
+  std::vector<LogEntry> get_logs_by_source(const QString& source) const;
+  std::vector<LogEntry> get_recent_logs(int count = 100) const;
+  bool add_log(const LogEntry& entry);
+  bool clear_logs();
+  size_t get_log_count() const;
+
+  // Audit-Log
+  struct AuditEntry {
+    QString id;
+    QString action;
+    QString user_id;
+    QString username;
+    QString resource_type;
+    QString resource_id;
+    QString description;
+    QString ip_address;
+    QDateTime timestamp;
+    std::map<QString, QString> metadata;
+  };
+
+  std::vector<AuditEntry> get_audit_logs() const;
+  std::vector<AuditEntry> get_audit_logs_by_user(const QString& user_id) const;
+  std::vector<AuditEntry> get_audit_logs_by_action(const QString& action) const;
+  bool add_audit_entry(const AuditEntry& entry);
+  bool clear_audit_logs();
+  size_t get_audit_log_count() const;
+
   // Callbacks
   using AlertCallback = std::function<void(const Alert& alert)>;
   using HealthCallback = std::function<void(const HealthStatus& status)>;
+  using LogCallback = std::function<void(const LogEntry& entry)>;
+  using AuditCallback = std::function<void(const AuditEntry& entry)>;
 
   void set_alert_callback(AlertCallback callback);
   void set_health_callback(HealthCallback callback);
+  void set_log_callback(LogCallback callback);
+  void set_audit_callback(AuditCallback callback);
 
 signals:
   void prometheus_connected();
@@ -219,6 +270,17 @@ private:
   
   AlertCallback alert_callback_;
   HealthCallback health_callback_;
+  
+  // Log-Aggregation
+  std::vector<LogEntry> logs_;
+  QString current_log_id_;
+  
+  // Audit-Log
+  std::vector<AuditEntry> audit_logs_;
+  QString current_audit_id_;
+  
+  LogCallback log_callback_;
+  AuditCallback audit_callback_;
   
   mutable std::mutex mutex_;
 };

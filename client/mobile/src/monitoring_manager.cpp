@@ -40,7 +40,13 @@ MonitoringManager::MonitoringManager(MonitoringManager&& other) noexcept
   , alert_rules_(std::move(other.alert_rules_))
   , stats_(other.stats_)
   , alert_callback_(std::move(other.alert_callback_))
-  , health_callback_(std::move(other.health_callback_)) {
+  , health_callback_(std::move(other.health_callback_))
+  , logs_(std::move(other.logs_))
+  , current_log_id_(std::move(other.current_log_id_))
+  , audit_logs_(std::move(other.audit_logs_))
+  , current_audit_id_(std::move(other.current_audit_id_))
+  , log_callback_(std::move(other.log_callback_))
+  , audit_callback_(std::move(other.audit_callback_)) {
   
   other.prometheus_status_ = PrometheusStatus::DISABLED;
   other.grafana_status_ = GrafanaStatus::DISABLED;
@@ -67,6 +73,12 @@ MonitoringManager& MonitoringManager::operator=(MonitoringManager&& other) noexc
     stats_ = other.stats_;
     alert_callback_ = std::move(other.alert_callback_);
     health_callback_ = std::move(other.health_callback_);
+    logs_ = std::move(other.logs_);
+    current_log_id_ = std::move(other.current_log_id_);
+    audit_logs_ = std::move(other.audit_logs_);
+    current_audit_id_ = std::move(other.current_audit_id_);
+    log_callback_ = std::move(other.log_callback_);
+    audit_callback_ = std::move(other.audit_callback_);
     other.prometheus_status_ = PrometheusStatus::DISABLED;
     other.grafana_status_ = GrafanaStatus::DISABLED;
     other.stats_ = Stats{};
@@ -409,6 +421,131 @@ void MonitoringManager::set_alert_callback(AlertCallback callback) {
 
 void MonitoringManager::set_health_callback(HealthCallback callback) {
   health_callback_ = std::move(callback);
+}
+
+void MonitoringManager::set_log_callback(LogCallback callback) {
+  log_callback_ = std::move(callback);
+}
+
+void MonitoringManager::set_audit_callback(AuditCallback callback) {
+  audit_callback_ = std::move(callback);
+}
+
+// ── Log-Aggregation ──────────────────────────────────────────────────
+
+std::vector<MonitoringManager::LogEntry> MonitoringManager::get_logs(LogLevel level) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  std::vector<LogEntry> result;
+  for (const auto& log : logs_) {
+    if (log.level == level) {
+      result.push_back(log);
+    }
+  }
+  return result;
+}
+
+std::vector<MonitoringManager::LogEntry> MonitoringManager::get_logs_by_source(const QString& source) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  std::vector<LogEntry> result;
+  for (const auto& log : logs_) {
+    if (log.source == source) {
+      result.push_back(log);
+    }
+  }
+  return result;
+}
+
+std::vector<MonitoringManager::LogEntry> MonitoringManager::get_recent_logs(int count) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  std::vector<LogEntry> result;
+  int start = static_cast<int>(logs_.size()) - count;
+  if (start < 0) {
+    start = 0;
+  }
+  for (int i = start; i < static_cast<int>(logs_.size()); i++) {
+    result.push_back(logs_[i]);
+  }
+  return result;
+}
+
+bool MonitoringManager::add_log(const LogEntry& entry) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  logs_.push_back(entry);
+  
+  if (log_callback_) {
+    log_callback_(entry);
+  }
+  
+  return true;
+}
+
+bool MonitoringManager::clear_logs() {
+  std::lock_guard<std::mutex> lock(mutex_);
+  logs_.clear();
+  return true;
+}
+
+size_t MonitoringManager::get_log_count() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return logs_.size();
+}
+
+// ── Audit-Log ────────────────────────────────────────────────────────
+
+std::vector<MonitoringManager::AuditEntry> MonitoringManager::get_audit_logs() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return audit_logs_;
+}
+
+std::vector<MonitoringManager::AuditEntry> MonitoringManager::get_audit_logs_by_user(const QString& user_id) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  std::vector<AuditEntry> result;
+  for (const auto& entry : audit_logs_) {
+    if (entry.user_id == user_id) {
+      result.push_back(entry);
+    }
+  }
+  return result;
+}
+
+std::vector<MonitoringManager::AuditEntry> MonitoringManager::get_audit_logs_by_action(const QString& action) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  std::vector<AuditEntry> result;
+  for (const auto& entry : audit_logs_) {
+    if (entry.action == action) {
+      result.push_back(entry);
+    }
+  }
+  return result;
+}
+
+bool MonitoringManager::add_audit_entry(const AuditEntry& entry) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  audit_logs_.push_back(entry);
+  
+  if (audit_callback_) {
+    audit_callback_(entry);
+  }
+  
+  return true;
+}
+
+bool MonitoringManager::clear_audit_logs() {
+  std::lock_guard<std::mutex> lock(mutex_);
+  audit_logs_.clear();
+  return true;
+}
+
+size_t MonitoringManager::get_audit_log_count() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return audit_logs_.size();
 }
 
 // ── Slots ────────────────────────────────────────────────────────────

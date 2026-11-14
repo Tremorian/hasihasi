@@ -484,8 +484,8 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Grafana-Dashboards**: Vordefinierte Dashboards für Betrieb – `set_grafana_url()`, `set_grafana_api_key()`, `add_dashboard()`, `get_dashboards()`
 - [x] **Alerting**: Benachrichtigungen bei kritischen Ereignissen (Email, Discord, Slack) – `Alert`, `AlertSeverity`, `add_alert_rule()`, `get_alerts()`
 - [x] **Health-Checks**: Regelmäßige Server-Health-Prüfungen – `get_health_status()`, `on_health_check_timer()`
-- [ ] **Log-Aggregation**: Journald-kompatibel, ELK-Stack-Integration (optional) – nicht implementiert, da optional
-- [ ] **Audit-Log**: Vollständige Protokollierung aller sicherheitsrelevanten Aktionen – nicht implementiert, da optional
+- [x] **Log-Aggregation**: Journald-kompatibel, ELK-Stack-Integration (optional) – `LogLevel`, `LogEntry`, `get_logs()`, `add_log()`, `get_recent_logs()`, `get_logs_by_source()`
+- [x] **Audit-Log**: Vollständige Protokollierung aller sicherheitsrelevanten Aktionen – `AuditEntry`, `add_audit_entry()`, `get_audit_logs()`, `get_audit_logs_by_user()`, `get_audit_logs_by_action()`
 - [x] **Performance-Monitoring**: Echtzeit-Metriken für Latenz, Verlust, CPU, Speicher – `HealthStatus`, `set_gauge()`, `increment_counter()`, `observe_histogram()`
 - [x] **Benutzer-Metriken**: Aktive Nutzer, Kanal-Nutzung, Chat-Aktivität – `HealthStatus::connected_users`, `HealthStatus::active_channels`
 
