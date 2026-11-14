@@ -1,8 +1,18 @@
-version = 1
-SPDX-PackageName = "hasihasi"
-SPDX-PackageDownloadLocation = "https://hasihasi.de"
+# SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
 
-files = [
-  { path = "releases", exclude_from_archiving = true },
-  { path = "client/resources/logo_placeholder.svg", precedence = "aggregate" },
-]
+version = 1
+
+# HasiHasi – Low-Latency Linux Voice Chat
+# Lizenz: GPL-3.0-or-later
+
+[[annotations]]
+path = ["**"]
+SPDX-FileCopyrightText = "2026 Nils Pankoke <tremorian@mailbox.org>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# Ausnahmen
+[[annotations]]
+path = ["packaging/**/*", "docs/**/*", "resources/**/*"]
+SPDX-FileCopyrightText = "2026 Nils Pankoke <tremorian@mailbox.org>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
