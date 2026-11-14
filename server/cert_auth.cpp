@@ -59,8 +59,41 @@ struct CertAuth::Impl {
     // Selbst-signiert prüfen
     result.is_self_signed = (result.subject == result.issuer);
 
+    // Ablaufprüfung
+    time_t not_after = X509_getm_notAfter(cert.native_handle());
+    time_t now = time(nullptr);
+    if (not_after < now) {
+      result.valid = false;
+      result.error = "Certificate expired";
+      hh::get_logger().warn("CertAuth: Certificate expired (subject: {})", result.subject);
+      return result;
+    }
+
+    // Let's Encrypt-Validierung (wenn aktiv)
+    if (lets_encrypt_enabled_ && !is_self_signed) {
+      // Prüfe, ob Issuer ein bekannter Let's Encrypt Issuer ist
+      std::string le_issuers[] = {
+        "Let's Encrypt",
+        "LetsEncrypt",
+        "ZeroSSL",
+        "Buypass",
+        "ISRG Root X1"
+      };
+      bool is_le_issuer = false;
+      for (const auto& issuer : le_issuers) {
+        if (result.issuer.find(issuer) != std::string::npos) {
+          is_le_issuer = true;
+          break;
+        }
+      }
+      
+      if (is_le_issuer) {
+        hh::get_logger().info("CertAuth: Let's Encrypt certificate validated (subject: {})", result.subject);
+      }
+    }
+
     // Validierung
-    result.valid = true; // Grundlegende Validierung (keine Ablaufprüfung in diesem Schritt)
+    result.valid = true;
 
     hh::get_logger().debug("CertAuth: Certificate validated (fingerprint: {}, subject: {}, self-signed: {})",
                            result.fingerprint.substr(0, 16) + "...",
@@ -121,9 +154,12 @@ struct CertAuth::Impl {
     if (!validation.valid) {
       result.success = false;
       result.error = validation.error;
+      stats_.authentication_failures++;
       callback(result);
       return;
     }
+
+    stats_.certificates_validated++;
 
     // In Zertifikats-Suche
     auto it = cert_store_.find(validation.fingerprint);
@@ -159,12 +195,15 @@ struct CertAuth::Impl {
         result.success = false;
         result.error = "Certificate not registered and TOFU is disabled";
         stats_.tofu_rejects++;
+        stats_.authentication_failures++;
 
         hh::get_logger().info("CertAuth: New certificate rejected (TOFU disabled)");
       }
     }
 
-    stats_.authentication_success++;
+    if (result.success) {
+      stats_.authentication_success++;
+    }
     callback(result);
   }
 
