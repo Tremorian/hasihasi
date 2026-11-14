@@ -53,6 +53,7 @@ add_executable(unit_tests
   test_file_share.cpp
   test_screen_share.cpp
   test_monitoring.cpp
+  test_advanced_server.cpp
 )
 
 target_link_libraries(unit_tests

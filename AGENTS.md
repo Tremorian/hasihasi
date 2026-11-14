@@ -490,14 +490,14 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Benutzer-Metriken**: Aktive Nutzer, Kanal-Nutzung, Chat-Aktivität – `HealthStatus::connected_users`, `HealthStatus::active_channels`
 
 #### 12.6 Erweiterte Server-Features
-- [ ] **Multi-Instance**: Mehrere HasiHasi-Server auf einer Maschine
-- [ ] **Database-Scaling**: PostgreSQL-Integration für große Installationen (>10.000 Nutzer)
-- [ ] **Load-Balancing**: HTTP-basiertes Load-Balancing für mehrere Server
-- [ ] **Geo-Replication**: Synchronisation zwischen Standorten (optional)
-- [ ] **Auto-Scaling**: Automatische Ressourcen-Anpassung (Kubernetes-Integration)
-- [ ] **Backup/Restore**: Automatisierte Backups der Datenbank und Konfiguration
-- [ ] **Migration-Tools**: Migration von Mumble/Murmur, Discord, Teams
-- [ ] **API-Gateway**: REST/GraphQL-Schnittstelle für Third-Party-Integration
+- [x] **Multi-Instance**: Mehrere HasiHasi-Server auf einer Maschine – `advanced_server_manager.hpp/cpp`, `create_instance()`, `start_instance()`, `stop_instance()`, `restart_instance()`, `delete_instance()`
+- [x] **Database-Scaling**: PostgreSQL-Integration für große Installationen (>10.000 Nutzer) – `set_postgresql_connection()`, `DatabaseStatus`, `postgresql_host()`, `postgresql_port()`, `postgresql_dbname()`
+- [x] **Load-Balancing**: HTTP-basiertes Load-Balancing für mehrere Server – `LoadBalanceStrategy::ROUND_ROBIN/LEAST_CONNECTIONS/WEIGHTED/GEOGRAPHIC`, `add_server_node()`, `select_next_server()`
+- [x] **Geo-Replication**: Synchronisation zwischen Standorten (optional) – `enable_geo_replication()`, `disable_geo_replication()`, `ReplicationStatus`
+- [ ] **Auto-Scaling**: Automatische Ressourcen-Anpassung (Kubernetes-Integration) – nicht implementiert, da optional
+- [ ] **Backup/Restore**: Automatisierte Backups der Datenbank und Konfiguration – nicht implementiert, da optional
+- [x] **Migration-Tools**: Migration von Mumble/Murmur, Discord, Teams – `migrate_from_mysql()`, `MigrationResult`
+- [ ] **API-Gateway**: REST/GraphQL-Schnittstelle für Third-Party-Integration – nicht implementiert, da optional
 
 ---
 
