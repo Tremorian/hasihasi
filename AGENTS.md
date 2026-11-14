@@ -257,6 +257,7 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 | M8 | Overlay, Positional Audio, Whisper-Ziele, Echo-Cancellation | |
 | M9 | Voice-Routing, Auth-Flow, Prometheus, Admin-CLI, D-Bus, Autostart, Theme, HiDPI, tc netem, RNNoise-Dep, Lock-free Buffers, Packaging-Tests, Lizenz/Reuse | Echter Zwei-Client-Test mit verschlüsselter Voice-Übertragung |
 | M10 | Reconnect-Manager, Positional Audio, Zwei-Client-Echt-Test, Lock-free SPSC Ringpuffer, Markdown light, Barrierefreiheit, DSP-Thread, tc netem-Test, Time-Stretching, RNNoise-Submodule, Paket-Builds, Debug-Symbole, Remote-Bilder blockieren | Vollständige Client/Server-Fertigstellung mit allen Features |
+| M10.5 | Multi-Language-Unterstützung (Deutsch, Englisch, Französisch, Spanisch) | Vollständige Internationalisierung (i18n) mit Qt Linguist |
 | M11 | Server-Cluster, WebSocket-Support, Mobile-Client (Qt Quick), Sprachassistent, Integration (Discord/Teams), Performance-Optimierung, Security-Hardening | Multi-Server-Betrieb, Cross-Platform, Third-Party-Integration |
 
 ---
@@ -350,6 +351,37 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Debug-Symbole mitbauen**: RelWithDebInfo Standard
 - [x] **Flatpak-Config**: Debug-Symbole aktiviert
 - [x] **--version Flag**: Server mit Author/Lizenz/Link
+
+---
+
+### M10.5 – Detail-Spezifikation
+
+**Ziel:** Vollständige Internationalisierung (i18n) mit Qt Linguist.
+
+#### 10.5.1 Multi-Language-Unterstützung
+- [ ] **Qt Linguist**: Für Übersetzungen verwenden
+- [ ] **Sprachen**: Deutsch (de), Englisch (en), Französisch (fr), Spanisch (es)
+- [ ] **QTranslator**: Dynamisches Laden von Übersetzungen zur Laufzeit
+- [ ] **Sprachwechsel**: Im UI (Einstellungen → Sprache)
+- [ ] **Fallback**: Englisch als Fallback, wenn Übersetzung fehlt
+
+#### 10.5.2 Translation-Files
+- [ ] **`.ts`-Files**: Qt Linguist Translation-Files
+- [ ] **`.qm`-Files**: Kompilierte Translation-Files
+- [ ] **`translations/`**: Verzeichnis für Translation-Files
+- [ ] **`LINGUIST_FILES`**: In CMakeLists.txt konfigurieren
+
+#### 10.5.3 Code-Integration
+- [ ] **`tr()`-Funktionen**: Alle UI-Strings mit `tr()` markieren
+- [ ] **`QCoreApplication::translate()`**: Für nicht-UI-Strings
+- [ ] **`QLocale`**: Für locale-spezifische Formatierung (Datum, Zeit, Zahlen)
+- [ ] **`QTranslator::installTranslator()`**: Beim Start laden
+
+#### 10.5.4 Server-Internationalisierung
+- [ ] **Server-Meldungen**: Auf Deutsch/Englisch/Französisch/Spanisch
+- [ ] **Fehlermeldungen**: Übersetzt
+- [ ] **Willkommensnachricht**: In gewählter Sprache
+- [ ] **Prometheus-Metriken**: Englisch (Standard)
 
 ---
 
