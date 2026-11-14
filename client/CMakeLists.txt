@@ -53,6 +53,7 @@ add_executable(hasihasi
   ui/src/mainwindow.cpp
   ui/src/statisticswidget.cpp
   ui/src/aboutdialog.cpp
+  ui/src/languagedialog.cpp
 )
 
 target_link_libraries(hasihasi
