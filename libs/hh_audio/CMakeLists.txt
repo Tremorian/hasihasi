@@ -1,6 +1,9 @@
 # SPDX-FileCopyrightText: 2026 Nils Pankoke <tremorian@mailbox.org>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+# RNNoise als Submodule
+add_subdirectory(${CMAKE_SOURCE_DIR}/libs/rnnoise)
+
 add_library(hh_audio
   src/buffers.cpp
   src/pipewire.cpp
@@ -36,6 +39,7 @@ target_link_libraries(hh_audio
     ${OPUS_LIBRARIES}
     ${PIPEWIRE_LIBRARIES}
     Threads::Threads
+    rnnoise
 )
 
 target_compile_options(hh_audio
