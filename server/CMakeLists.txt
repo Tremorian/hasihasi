@@ -13,6 +13,7 @@ add_executable(hasihasi-server
   acl.cpp
   database.cpp
   text_chat.cpp
+  ban_kick.cpp
 )
 
 target_include_directories(hasihasi-server

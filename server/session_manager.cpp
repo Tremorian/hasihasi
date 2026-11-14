@@ -244,4 +244,32 @@ bool ServerSessionManager::delete_text_message(uint32_t message_id) {
   return text_chat_.delete_message(message_id);
 }
 
+// ── Ban/Kick ──────────────────────────────────────────────────────────
+
+bool ServerSessionManager::is_user_banned(uint32_t user_id) const {
+  return ban_kick_manager_.is_banned(user_id);
+}
+
+std::shared_ptr<BanEntry> ServerSessionManager::ban_user(uint32_t user_id, const std::string& username,
+                                                          uint32_t admin_id, const std::string& reason) {
+  return ban_kick_manager_.add_ban(user_id, username, admin_id, reason);
+}
+
+bool ServerSessionManager::unban_user(uint32_t user_id) {
+  return ban_kick_manager_.remove_ban(user_id);
+}
+
+std::vector<std::shared_ptr<BanEntry>> ServerSessionManager::get_bans() const {
+  return ban_kick_manager_.get_bans();
+}
+
+std::shared_ptr<KickEntry> ServerSessionManager::kick_user(uint32_t user_id, const std::string& username,
+                                                            uint32_t admin_id, const std::string& reason) {
+  return ban_kick_manager_.add_kick(user_id, username, admin_id, reason);
+}
+
+std::vector<std::shared_ptr<KickEntry>> ServerSessionManager::get_kicks() const {
+  return ban_kick_manager_.get_kicks();
+}
+
 } // namespace hh::server

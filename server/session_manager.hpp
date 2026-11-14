@@ -8,6 +8,7 @@
 #include "server/voice_router.hpp"
 #include "server/acl.hpp"
 #include "server/text_chat.hpp"
+#include "server/ban_kick.hpp"
 
 #include <asio.hpp>
 #include <cstdint>
@@ -115,6 +116,16 @@ public:
   std::vector<std::shared_ptr<TextMessage>> get_private_messages(uint32_t user_id, int limit = 50) const;
   bool delete_text_message(uint32_t message_id);
 
+  // Ban/Kick-Verwaltung
+  bool is_user_banned(uint32_t user_id) const;
+  std::shared_ptr<BanEntry> ban_user(uint32_t user_id, const std::string& username,
+                                      uint32_t admin_id, const std::string& reason);
+  bool unban_user(uint32_t user_id);
+  std::vector<std::shared_ptr<BanEntry>> get_bans() const;
+  std::shared_ptr<KickEntry> kick_user(uint32_t user_id, const std::string& username,
+                                        uint32_t admin_id, const std::string& reason);
+  std::vector<std::shared_ptr<KickEntry>> get_kicks() const;
+
   // ACL-Verwaltung
   std::shared_ptr<AclGroup> create_acl_group(const std::string& name, bool inherits = false);
   bool delete_acl_group(uint32_t group_id);
@@ -137,6 +148,7 @@ private:
   VoiceRouter voice_router_;
   AclManager acl_manager_;
   TextChat text_chat_;
+  BanKickManager ban_kick_manager_;
   MessageHandler message_handler_;
 };
 
