@@ -5,11 +5,19 @@
 #include <csignal>
 #include <memory>
 #include <string>
+#include <thread>
+#include <chrono>
 
 #include "hh/logging.hpp"
 #include "hh/config.hpp"
 
-#include "hh/net/transport.hpp"
+#include "server/connection.hpp"
+#include "server/voice_router.hpp"
+#include "server/channel.hpp"
+#include "server/user.hpp"
+
+#include <asio.hpp>
+#include <asio/ssl.hpp>
 
 namespace {
 volatile sig_atomic_t g_running = 1;
@@ -18,6 +26,19 @@ void signal_handler(int) {
   g_running = 0;
 }
 } // namespace
+
+// Handler für eingehende Nachrichten vom Control-Kanal
+void handle_control_message(const std::shared_ptr<hh::server::Connection>& conn,
+                            uint16_t type,
+                            std::span<const uint8_t> payload) {
+  (void)conn;
+  (void)type;
+  (void)payload;
+
+  // TODO: Protobuf-Nachrichten parsen und verarbeiten
+  // MSG_HELLO (0), MSG_AUTHENTICATE (2), MSG_CHANNEL_LIST (4), etc.
+  hh::get_logger().debug("Control message received: type={}", type);
+}
 
 int main(int argc, char* argv[]) {
   std::string config_path = "/etc/hasihasi/server.toml";
@@ -66,7 +87,74 @@ int main(int argc, char* argv[]) {
 
   hh::get_logger().info("HasiHasi-Server startet...");
 
-  // TODO: Server-Logik implementieren (Meilenstein M2+)
+  // ── Asio-IO-Context ─────────────────────────────────────────────────
+  asio::io_context ioc;
+
+  // ── TLS-Server ───────────────────────────────────────────────────────
+  asio::ssl::context ssl_context(asio::ssl::context::sslv23);
+
+  // TODO: Zertifikat und Key laden (aus Konfiguration)
+  // ssl_context.use_certificate_chain_file("/etc/hasihasi/cert.pem");
+  // ssl_context.use_private_key_file("/etc/hasihasi/key.pem", asio::ssl::context::pem);
+
+  // Für Testzwecke: Self-Signed-Zertifikat generieren (TOFU)
+  hh::get_logger().warn("Kein TLS-Zertifikat geladen – Server startet mit Self-Signed-Zertifikat");
+
+  // ── TCP-Listener ─────────────────────────────────────────────────────
+  asio::ip::tcp::acceptor acceptor(ioc, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 64738));
+  hh::get_logger().info("TLS-Control-Listener auf Port 64738");
+
+  // ── Voice-Router ─────────────────────────────────────────────────────
+  hh::server::VoiceRouter voice_router(ioc);
+  if (!voice_router.open(64738)) {
+    hh::get_logger().error("Voice-Router konnte nicht geöffnet werden");
+    return 1;
+  }
+  hh::get_logger().info("Voice-UDP auf Port {}", voice_router.local_endpoint().port());
+
+  // ── Kanalbaum ────────────────────────────────────────────────────────
+  hh::server::ChannelTree channel_tree;
+
+  // Root-Kanal + Test-Kanal
+  channel_tree.create_channel(hh::server::ChannelTree::ROOT_CHANNEL_ID, "Lobby", 50, false, "Hauptkanal");
+  channel_tree.create_channel(hh::server::ChannelTree::ROOT_CHANNEL_ID, "Test", 10, true, "Testkanal");
+
+  // ── Nutzer-Verwaltung ────────────────────────────────────────────────
+  hh::server::UserManager user_manager;
+
+  // ── Verbindungen akzeptieren ─────────────────────────────────────────
+  hh::get_logger().info("Bereit für Verbindungen (STRG+C zum Stoppen)");
+
+  while (g_running) {
+    // Asio-Events verarbeiten
+    ioc.poll();
+
+    // Neue Verbindung akzeptieren
+    try {
+      asio::ip::tcp::socket socket(ioc);
+      acceptor.accept(socket);
+
+      hh::get_logger().info("Neue Verbindung von {}", socket.remote_endpoint().address().to_string());
+
+      // TLS-Stream erstellen
+      auto ssl_socket = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(
+        std::move(socket), ssl_context);
+
+      // Connection erstellen
+      auto connection = std::make_shared<hh::server::Connection>(*ssl_socket);
+
+      // Connection starten
+      connection->start([connection](uint16_t type, std::span<const uint8_t> payload) {
+        handle_control_message(connection, type, payload);
+      });
+
+    } catch (const std::exception& e) {
+      hh::get_logger().error("Fehler beim Akzeptieren: {}", e.what());
+    }
+
+    // Schlafen, um CPU zu sparen
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  }
 
   hh::get_logger().info("HasiHasi-Server gestoppt");
   return 0;

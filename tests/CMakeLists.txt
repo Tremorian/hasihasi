@@ -8,6 +8,7 @@ add_executable(unit_tests
   test_framing.cpp
   test_ringbuffer.cpp
   test_loopback.cpp
+  test_server.cpp
 )
 
 target_link_libraries(unit_tests
@@ -15,6 +16,7 @@ target_link_libraries(unit_tests
     Catch2::Catch2WithMain
     hh_proto::hh_proto
     hh_audio::hh_audio
+    hh_net::hh_net
 )
 
 target_compile_features(unit_tests PRIVATE cxx_std_20)

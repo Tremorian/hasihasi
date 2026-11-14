@@ -3,12 +3,23 @@
 
 add_executable(hasihasi-server
   main.cpp
+  connection.cpp
+  voice_router.cpp
+  channel.cpp
+  user.cpp
+)
+
+target_include_directories(hasihasi-server
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(hasihasi-server
   PRIVATE
     hh_common::hh_common
+    hh_proto::hh_proto
     hh_net::hh_net
+    OpenSSL::TLS
 )
 
 install(TARGETS hasihasi-server

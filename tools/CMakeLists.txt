@@ -34,3 +34,22 @@ target_compile_features(hasihasi-loopback PRIVATE cxx_std_20)
 install(TARGETS hasihasi-loopback
   RUNTIME DESTINATION bin
 )
+
+# ── CLI-Testclient ────────────────────────────────────────────────────
+
+add_executable(hasihasi-cli-test
+  cli_client.cpp
+)
+
+target_link_libraries(hasihasi-cli-test
+  PRIVATE
+    hh_common::hh_common
+    hh_proto::hh_proto
+    OpenSSL::TLS
+)
+
+target_compile_features(hasihasi-cli-test PRIVATE cxx_std_20)
+
+install(TARGETS hasihasi-cli-test
+  RUNTIME DESTINATION bin
+)
