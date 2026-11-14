@@ -26,6 +26,7 @@ add_library(hh_server_lib
   load_balancer.cpp
   server_sync.cpp
   cluster_health.cpp
+  websocket_server.cpp
 )
 
 target_include_directories(hh_server_lib
