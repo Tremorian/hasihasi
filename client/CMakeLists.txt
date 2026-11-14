@@ -19,6 +19,7 @@ add_library(client_core
   src/game_overlay.cpp
   src/positional_audio_plugin.cpp
   src/dbus_interface.cpp
+  src/autostart_manager.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)
