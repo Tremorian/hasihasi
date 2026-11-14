@@ -13,6 +13,7 @@ add_executable(unit_tests
   test_jitter_buffer.cpp
   test_positonal_audio.cpp
   test_session.cpp
+  test_voice_pipeline.cpp
 )
 
 target_link_libraries(unit_tests
