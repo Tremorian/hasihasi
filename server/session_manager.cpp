@@ -98,6 +98,32 @@ std::shared_ptr<User> ServerSessionManager::register_user(uint32_t id, const std
   return user;
 }
 
+std::shared_ptr<User> ServerSessionManager::register_user_with_cert(uint32_t id, const std::string& username,
+                                                                     const std::string& cert_fingerprint,
+                                                                     const std::shared_ptr<Connection>& connection) {
+  auto user = user_manager_.create_user(id, username, connection);
+  if (user) {
+    // Zertifikats-Fingerprint setzen
+    user->set_cert_fingerprint(cert_fingerprint);
+    hh::get_logger().info("ServerSessionManager: User {} registered with cert {} (channel: {})",
+                          username, cert_fingerprint.substr(0, 16) + "...", ChannelTree::ROOT_CHANNEL_ID);
+
+    // Standardmäßig zum Root-Kanal hinzufügen
+    multi_channel_.assign_user(id, ChannelTree::ROOT_CHANNEL_ID);
+  }
+  return user;
+}
+
+std::shared_ptr<User> ServerSessionManager::find_user_by_cert(const std::string& cert_fingerprint) const {
+  // Prüfe alle Nutzer
+  for (const auto& [id, user] : user_manager_.all_users()) {
+    if (user->cert_fingerprint() == cert_fingerprint) {
+      return user;
+    }
+  }
+  return nullptr;
+}
+
 void ServerSessionManager::unregister_user(uint32_t user_id) {
   user_manager_.remove_user(user_id);
   hh::get_logger().info("ServerSessionManager: User {} unregistered", user_id);

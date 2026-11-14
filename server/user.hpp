@@ -26,6 +26,11 @@ public:
   const std::shared_ptr<Connection>& connection() const { return connection_; }
   uint32_t channel_id() const { return channel_id_; }
 
+  // Zertifikats-Fingerprint
+  const std::string& cert_fingerprint() const { return cert_fingerprint_; }
+  void set_cert_fingerprint(const std::string& fingerprint) { cert_fingerprint_ = fingerprint; }
+  bool has_cert() const { return !cert_fingerprint_.empty(); }
+
   // Status
   void set_muted(bool muted) { muted_ = muted; }
   bool is_muted() const { return muted_; }
@@ -33,6 +38,10 @@ public:
   bool is_deafened() const { return deafened_; }
   void set_suppressing(bool suppressing) { suppressing_ = suppressing; }
   bool is_suppressing() const { return suppressing_; }
+
+  // Admin-Status
+  bool is_admin() const { return is_admin_; }
+  void set_admin(bool admin) { is_admin_ = admin; }
 
   // Netzwerk
   asio::ip::udp::endpoint udp_endpoint() const { return udp_endpoint_; }
@@ -46,6 +55,8 @@ private:
   bool muted_ = false;
   bool deafened_ = false;
   bool suppressing_ = false;
+  bool is_admin_ = false;
+  std::string cert_fingerprint_;
   asio::ip::udp::endpoint udp_endpoint_;
 };
 

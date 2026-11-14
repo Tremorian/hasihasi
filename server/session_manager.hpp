@@ -76,6 +76,14 @@ public:
   std::shared_ptr<User> register_user(uint32_t id, const std::string& username,
                                        const std::shared_ptr<Connection>& connection);
 
+  // Nutzer mit Zertifikat registrieren
+  std::shared_ptr<User> register_user_with_cert(uint32_t id, const std::string& username,
+                                                 const std::string& cert_fingerprint,
+                                                 const std::shared_ptr<Connection>& connection);
+
+  // Nutzer über Zertifikat finden
+  std::shared_ptr<User> find_user_by_cert(const std::string& cert_fingerprint) const;
+
   // Nutzer entfernen
   void unregister_user(uint32_t user_id);
 

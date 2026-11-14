@@ -18,6 +18,7 @@ add_executable(unit_tests
   test_reconnect_manager.cpp
   test_acl.cpp
   test_database.cpp
+  test_user_cert.cpp
 )
 
 target_link_libraries(unit_tests
