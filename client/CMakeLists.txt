@@ -11,6 +11,10 @@ add_library(client_core
   src/session.cpp
   src/voice_pipeline.cpp
   src/latency_test.cpp
+  src/global_hotkey_manager.cpp
+  src/system_tray.cpp
+  src/audio_assistant.cpp
+  src/server_list.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)
