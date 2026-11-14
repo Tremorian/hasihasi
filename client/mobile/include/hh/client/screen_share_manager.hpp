@@ -143,6 +143,35 @@ public:
   bool resume_recording();
   QString get_recorded_file_path() const;
 
+  // Berechtigung
+  enum class PermissionLevel {
+    NONE,
+    VIEW_ONLY,
+    SHARE_SCREEN,
+    CONTROL,
+    ADMIN
+  };
+  Q_ENUM(PermissionLevel)
+
+  struct Permission {
+    uint32_t user_id;
+    QString username;
+    PermissionLevel level;
+    bool is_granted;
+    QDateTime granted_at;
+    uint32_t granted_by;
+    QString reason;
+  };
+
+  bool has_permission(uint32_t user_id, PermissionLevel level) const;
+  bool grant_permission(uint32_t user_id, const QString& username, PermissionLevel level, uint32_t granted_by, const QString& reason);
+  bool revoke_permission(uint32_t user_id);
+  std::vector<Permission> get_permissions(uint32_t user_id) const;
+  std::vector<Permission> get_all_permissions() const;
+  PermissionLevel get_user_permission(uint32_t user_id) const;
+  void set_default_permission(PermissionLevel level);
+  PermissionLevel default_permission() const;
+
   // Share-Status
   enum class ShareStatus {
     IDLE,
@@ -252,6 +281,9 @@ private:
   int bitrate_kbps_ = 0; // 0 = auto
   
   Stats stats_;
+  
+  std::map<uint32_t, std::vector<Permission>> permissions_;
+  PermissionLevel default_permission_ = PermissionLevel::NONE;
   
   FrameCallback frame_callback_;
   ErrorCallback error_callback_;

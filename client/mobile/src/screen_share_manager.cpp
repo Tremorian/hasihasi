@@ -466,6 +466,7 @@ ScreenShareManager::Stats ScreenShareManager::get_stats() const {
 void ScreenShareManager::reset_stats() {
   std::lock_guard<std::mutex> lock(mutex_);
   stats_ = Stats{};
+  default_permission_ = PermissionLevel::NONE;
 }
 
 // ── Callbacks ────────────────────────────────────────────────────────
@@ -504,6 +505,107 @@ void ScreenShareManager::on_capture_timer() {
   if (frame_callback_) {
     frame_callback_(frame);
   }
+}
+
+// ── Berechtigung ─────────────────────────────────────────────────────
+
+bool ScreenShareManager::has_permission(uint32_t user_id, PermissionLevel level) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  auto it = permissions_.find(user_id);
+  if (it == permissions_.end()) {
+    return false;
+  }
+  
+  for (const auto& perm : it->second) {
+    if (perm.is_granted && static_cast<int>(perm.level) >= static_cast<int>(level)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+bool ScreenShareManager::grant_permission(uint32_t user_id, const QString& username, PermissionLevel level, uint32_t granted_by, const QString& reason) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  Permission perm;
+  perm.user_id = user_id;
+  perm.username = username;
+  perm.level = level;
+  perm.is_granted = true;
+  perm.granted_at = QDateTime::currentDateTime();
+  perm.granted_by = granted_by;
+  perm.reason = reason;
+  
+  permissions_[user_id].push_back(perm);
+  return true;
+}
+
+bool ScreenShareManager::revoke_permission(uint32_t user_id) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  auto it = permissions_.find(user_id);
+  if (it != permissions_.end()) {
+    for (auto& perm : it->second) {
+      perm.is_granted = false;
+    }
+    return true;
+  }
+  
+  return false;
+}
+
+std::vector<ScreenShareManager::Permission> ScreenShareManager::get_permissions(uint32_t user_id) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  auto it = permissions_.find(user_id);
+  if (it != permissions_.end()) {
+    return it->second;
+  }
+  
+  return {};
+}
+
+std::vector<ScreenShareManager::Permission> ScreenShareManager::get_all_permissions() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  std::vector<Permission> result;
+  for (const auto& pair : permissions_) {
+    for (const auto& perm : pair.second) {
+      result.push_back(perm);
+    }
+  }
+  
+  return result;
+}
+
+ScreenShareManager::PermissionLevel ScreenShareManager::get_user_permission(uint32_t user_id) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  auto it = permissions_.find(user_id);
+  if (it == permissions_.end()) {
+    return default_permission_;
+  }
+  
+  PermissionLevel highest = default_permission_;
+  for (const auto& perm : it->second) {
+    if (perm.is_granted && static_cast<int>(perm.level) > static_cast<int>(highest)) {
+      highest = perm.level;
+    }
+  }
+  
+  return highest;
+}
+
+void ScreenShareManager::set_default_permission(PermissionLevel level) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  default_permission_ = level;
+}
+
+ScreenShareManager::PermissionLevel ScreenShareManager::default_permission() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return default_permission_;
 }
 
 } // namespace hh::client

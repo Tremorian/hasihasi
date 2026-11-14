@@ -476,7 +476,7 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Framerate**: 15/30/60 fps (konfigurierbar) – `Framerate::FPS_15/30/60`, `set_framerate()`
 - [x] **Auflösung**: Original, halbe, viertel Auflösung (automatisch adaptiv) – `get_quality_settings()` (width/height)
 - [x] **Audio-Integration**: System-Audio und Mikrofon gleichzeitig – `AudioSource::MICROPHONE/SYSTEM_AUDIO/BOTH`, `set_audio_source()`
-- [ ] **Berechtigung**: Kanal-spezifisch, Sprecher muss Rechte haben – nicht implementiert, da optional
+- [x] **Berechtigung**: Kanal-spezifisch, Sprecher muss Rechte haben – `has_permission()`, `grant_permission()`, `revoke_permission()`, `PermissionLevel::NONE/VIEW_ONLY/SHARE_SCREEN/CONTROL/ADMIN`
 - [x] **Aufzeichnung**: Optionale lokale Aufzeichnung (MP4) – `start_recording()`, `stop_recording()`, `pause_recording()`, `resume_recording()`
 
 #### 12.5 Monitoring & Alerting
