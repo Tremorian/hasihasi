@@ -4,6 +4,10 @@
 add_library(hh_audio
   src/buffers.cpp
   src/pipewire.cpp
+  src/jitter_buffer.cpp
+  src/fec_plc.cpp
+  src/vad.cpp
+  src/noise_suppression.cpp
 )
 
 add_library(hh_audio::hh_audio ALIAS hh_audio)

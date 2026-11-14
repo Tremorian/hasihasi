@@ -10,6 +10,7 @@ add_executable(unit_tests
   test_loopback.cpp
   test_server.cpp
   test_client.cpp
+  test_jitter_buffer.cpp
 )
 
 target_link_libraries(unit_tests

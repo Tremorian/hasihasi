@@ -31,6 +31,7 @@ target_compile_features(client_core PUBLIC cxx_std_20)
 
 add_executable(hasihasi
   ui/src/mainwindow.cpp
+  ui/src/statisticswidget.cpp
 )
 
 target_link_libraries(hasihasi
