@@ -15,6 +15,9 @@ add_library(client_core
   src/system_tray.cpp
   src/audio_assistant.cpp
   src/server_list.cpp
+  src/echo_cancellation.cpp
+  src/game_overlay.cpp
+  src/positional_audio_plugin.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)
