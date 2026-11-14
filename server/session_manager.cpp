@@ -272,4 +272,38 @@ std::vector<std::shared_ptr<KickEntry>> ServerSessionManager::get_kicks() const 
   return ban_kick_manager_.get_kicks();
 }
 
+// ── Whisper/Shout ─────────────────────────────────────────────────────
+
+void ServerSessionManager::set_voice_target(uint32_t user_id, const VoiceTarget& target) {
+  voice_target_manager_.set_voice_target(user_id, target);
+}
+
+VoiceTarget ServerSessionManager::get_voice_target(uint32_t user_id) const {
+  return voice_target_manager_.get_voice_target(user_id);
+}
+
+void ServerSessionManager::clear_voice_target(uint32_t user_id) {
+  voice_target_manager_.clear_voice_target(user_id);
+}
+
+bool ServerSessionManager::is_user_whispering(uint32_t user_id) const {
+  return voice_target_manager_.is_whispering(user_id);
+}
+
+bool ServerSessionManager::is_user_shouting(uint32_t user_id) const {
+  return voice_target_manager_.is_shouting(user_id);
+}
+
+uint32_t ServerSessionManager::whisper_target(uint32_t user_id) const {
+  return voice_target_manager_.whisper_target(user_id);
+}
+
+std::vector<uint32_t> ServerSessionManager::whispering_users() const {
+  return voice_target_manager_.whispering_users();
+}
+
+std::vector<uint32_t> ServerSessionManager::shouting_users() const {
+  return voice_target_manager_.shouting_users();
+}
+
 } // namespace hh::server

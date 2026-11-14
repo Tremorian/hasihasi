@@ -14,6 +14,7 @@ add_executable(hasihasi-server
   database.cpp
   text_chat.cpp
   ban_kick.cpp
+  whisper_shout.cpp
 )
 
 target_include_directories(hasihasi-server

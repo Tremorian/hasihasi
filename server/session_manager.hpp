@@ -9,6 +9,7 @@
 #include "server/acl.hpp"
 #include "server/text_chat.hpp"
 #include "server/ban_kick.hpp"
+#include "server/whisper_shout.hpp"
 
 #include <asio.hpp>
 #include <cstdint>
@@ -134,6 +135,16 @@ public:
   void set_user_admin(uint32_t user_id, bool admin);
   bool is_user_admin(uint32_t user_id) const;
 
+  // Whisper/Shout-Verwaltung
+  void set_voice_target(uint32_t user_id, const VoiceTarget& target);
+  VoiceTarget get_voice_target(uint32_t user_id) const;
+  void clear_voice_target(uint32_t user_id);
+  bool is_user_whispering(uint32_t user_id) const;
+  bool is_user_shouting(uint32_t user_id) const;
+  uint32_t whisper_target(uint32_t user_id) const;
+  std::vector<uint32_t> whispering_users() const;
+  std::vector<uint32_t> shouting_users() const;
+
   // Statistik
   size_t user_count() const { return user_manager_.user_count(); }
   size_t channel_count() const { return multi_channel_.all_channels().size(); }
@@ -149,6 +160,7 @@ private:
   AclManager acl_manager_;
   TextChat text_chat_;
   BanKickManager ban_kick_manager_;
+  VoiceTargetManager voice_target_manager_;
   MessageHandler message_handler_;
 };
 
