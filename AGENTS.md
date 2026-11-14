@@ -255,6 +255,66 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 | M6 | Globale Hotkeys (Portal/X11), Tray, Audio-Assistent, Serverliste | manueller Test KDE + GNOME Wayland |
 | M7 | Paket-Pipeline vollständig (Abschnitt 12) + Container-Image (Server), Flatpak optional | Pakete aller Ziele installieren und starten in frischen VMs/Containern |
 | M8 | Overlay, Positional Audio, Whisper-Ziele, Echo-Cancellation | |
+| M9 | Voice-Routing, Auth-Flow, Prometheus, Admin-CLI, D-Bus, Autostart, Theme, HiDPI, tc netem, RNNoise-Dep, Lock-free Buffers, Packaging-Tests, Lizenz/Reuse | Echter Zwei-Client-Test mit verschlüsselter Voice-Übertragung |
+
+---
+
+### M9 – Detail-Spezifikation
+
+**Ziel:** Vollständige Voice-Übertragung mit Verschlüsselung, Monitoring, Administration und Client-Polish.
+
+#### 9.1 Voice-Routing (Server)
+- [ ] **AEAD-Verschlüsselung** für Voice-Pakete (AES-256-GCM oder ChaCha20-Poly1305)
+- [ ] **Pufferpools** für Voice-Pakete (kein Heap pro Paket)
+- [ ] **Schlüssel-Rotation** periodisch (ausgehandelt über TLS-Kanal)
+- [ ] **Nonce aus Sequenznummer** (kein Nonce-Reuse, Replay-Fenster)
+- [ ] **TCP-Fallback** für Voice (wenn UDP blockiert, automatisch erkannt, im UI angezeigt)
+- [ ] **500 gleichzeitige Sprecher-Streams** auf einem Kern (Ziel)
+
+#### 9.2 Authentifizierung (Server + Client)
+- [ ] **Zertifikats-Authentifizierung** (wie Mumble, Fingerprint bindet Account)
+- [ ] **TOFU** (Trust on First Use) für selbstsignierte Zertifikate
+- [ ] **Let's Encrypt**-Pfad konfigurierbar
+- [ ] **Server-Passwort** optional
+- [ ] **Protobuf-Parsing** für Control-Nachrichten (vollständig)
+- [ ] **Protokollversionierung** im Handshake (Server lehnt inkompatible Clients ab)
+
+#### 9.3 Monitoring & Administration (Server)
+- [ ] **Prometheus-Metriken** (`/metrics` auf separatem Port, standardmäßig nur localhost)
+- [ ] **Admin-Schnittstelle**: lokaler Unix-Socket mit `hasihasi-cli`
+- [ ] **Bandbreitenlimit** pro Nutzer
+- [ ] **Rate-Limiting** gegen Flooding
+- [ ] **Willkommensnachricht** bei Kanalbeitritt
+- [ ] **Strukturierte Logs** (journald-kompatibel)
+
+#### 9.4 Client-Polish
+- [ ] **D-Bus-Benachrichtigungen** (Sprechende Nutzer, Textnachrichten)
+- [ ] **Autostart**-Eintrag (XDG Autostart)
+- [ ] **Markdown light** im Textchat
+- [ ] **Remote-Bilder** blockieren ohne Klick
+- [ ] **Theme-Datei** für Farben (QSS-Singleton, nicht hartkodiert)
+- [ ] **HiDPI/fraktionale Skalierung** unter Wayland
+- [ ] **Barrierefreiheit** (Qt Accessibility)
+- [ ] **Scanline-Effekt** (optional, standardmäßig aus)
+
+#### 9.5 Audio-Pipeline
+- [ ] **Echter tc netem-Test** (5% Verlust, 20ms Jitter)
+- [ ] **RNNoise als Submodule/Dependency** (gepinnte Version)
+- [ ] **Time-Stretching** im Jitter-Buffer (in Sprechpausen)
+- [ ] **Lock-free SPSC Ringpuffer** für Audio
+- [ ] **DSP-Thread** (Highpass → RNNoise → AGC → VAD)
+
+#### 9.6 Packaging & Releases
+- [ ] **Echte Paket-Builds** in Containern (nicht nur Mock)
+- [ ] **Installationstests** in frischen Containern (`install` → `--version` → `remove`)
+- [ ] **Debug-Symbole** mitbauen (`-dbgsym`, `-debuginfo`, `-debug`)
+- [ ] **Flatpak**-Config (optional)
+
+#### 9.7 Lizenz & Reuse
+- [ ] **"Über"-Dialog** im Client (Autor, Lizenz, Link)
+- [ ] `hasihasi-server --version` mit Author/Lizenz/Link
+- [ ] **LICENSES/** Verzeichnis mit Fremdlicensen
+- [ ] **REUSE.toml** aktualisiert
 
 ---
 
