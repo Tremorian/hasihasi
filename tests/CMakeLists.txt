@@ -37,6 +37,7 @@ add_executable(unit_tests
   test_about_dialog.cpp
   test_markdown.cpp
   test_accessibility.cpp
+  test_dsp_thread.cpp
 )
 
 target_link_libraries(unit_tests

@@ -24,6 +24,7 @@ add_library(client_core
   src/hidpi_manager.cpp
   src/markdown_light.cpp
   src/accessibility.cpp
+  src/dsp_thread.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)
