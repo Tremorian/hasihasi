@@ -10,6 +10,7 @@ qt_standard_project_setup()
 add_library(client_core
   src/session.cpp
   src/voice_pipeline.cpp
+  src/latency_test.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)

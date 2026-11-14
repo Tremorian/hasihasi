@@ -14,6 +14,7 @@ add_executable(unit_tests
   test_positonal_audio.cpp
   test_session.cpp
   test_voice_pipeline.cpp
+  test_latency_test.cpp
 )
 
 target_link_libraries(unit_tests
