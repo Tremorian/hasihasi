@@ -72,6 +72,13 @@ qt_add_resources(hasihasi "resources"
     resources/logo_placeholder.svg
 )
 
+# Translation-Resources
+qt_add_resources(hasihasi "translations"
+  PREFIX "/"
+  FILES
+    resources/translations.qrc
+)
+
 install(TARGETS hasihasi
   RUNTIME DESTINATION bin
 )

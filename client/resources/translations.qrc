@@ -1,0 +1,9 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource prefix="/translations">
+    <file>../translations/qthasihasi_de.qm</file>
+    <file>../translations/qthasihasi_en.qm</file>
+    <file>../translations/qthasihasi_fr.qm</file>
+    <file>../translations/qthasihasi_es.qm</file>
+  </qresource>
+</RCC>
