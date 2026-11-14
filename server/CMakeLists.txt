@@ -8,6 +8,8 @@ add_library(hh_server_lib
   voice_router.cpp
   voice_crypto.cpp
   cert_auth.cpp
+  server_password_auth.cpp
+  protocol_version.cpp
   prometheus_metrics.cpp
   admin_server.cpp
   rate_limiter.cpp

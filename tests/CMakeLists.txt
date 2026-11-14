@@ -25,6 +25,9 @@ add_executable(unit_tests
   test_whisper_shout.cpp
   test_voice_crypto.cpp
   test_cert_auth.cpp
+  test_server_password_auth.cpp
+  test_protocol_version.cpp
+  test_voice_router_benchmark.cpp
   test_prometheus_metrics.cpp
   test_admin_server.cpp
   test_rate_limiter.cpp
