@@ -22,7 +22,7 @@
         }
       ],
       "config-opts": [
-        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
         "-DHASIHASI_BUILD_SERVER=OFF",
         "-DHASIHASI_BUILD_TOOLS=OFF"
       ]
