@@ -19,6 +19,7 @@ add_executable(unit_tests
   test_acl.cpp
   test_database.cpp
   test_user_cert.cpp
+  test_text_chat.cpp
 )
 
 target_link_libraries(unit_tests

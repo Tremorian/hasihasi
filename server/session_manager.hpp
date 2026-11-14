@@ -7,6 +7,7 @@
 #include "server/user.hpp"
 #include "server/voice_router.hpp"
 #include "server/acl.hpp"
+#include "server/text_chat.hpp"
 
 #include <asio.hpp>
 #include <cstdint>
@@ -105,6 +106,15 @@ public:
   // Voice-Weiterleitung (vereinfacht)
   void route_voice(uint32_t from_user_id, std::span<const uint8_t> voice_data);
 
+  // TextChat-Verwaltung
+  std::shared_ptr<TextMessage> send_text_message(uint32_t sender_id, const std::string& sender_name,
+                                                  const std::string& content,
+                                                  bool is_private, uint32_t target_id,
+                                                  uint32_t channel_id);
+  std::vector<std::shared_ptr<TextMessage>> get_channel_messages(uint32_t channel_id, int limit = 50) const;
+  std::vector<std::shared_ptr<TextMessage>> get_private_messages(uint32_t user_id, int limit = 50) const;
+  bool delete_text_message(uint32_t message_id);
+
   // ACL-Verwaltung
   std::shared_ptr<AclGroup> create_acl_group(const std::string& name, bool inherits = false);
   bool delete_acl_group(uint32_t group_id);
@@ -126,6 +136,7 @@ private:
   UserManager user_manager_;
   VoiceRouter voice_router_;
   AclManager acl_manager_;
+  TextChat text_chat_;
   MessageHandler message_handler_;
 };
 

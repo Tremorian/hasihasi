@@ -12,6 +12,7 @@ add_executable(hasihasi-server
   session_manager.cpp
   acl.cpp
   database.cpp
+  text_chat.cpp
 )
 
 target_include_directories(hasihasi-server

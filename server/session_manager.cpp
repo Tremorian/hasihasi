@@ -223,4 +223,25 @@ bool ServerSessionManager::is_user_admin(uint32_t user_id) const {
   return acl_manager_.is_admin(user_id);
 }
 
+// ── TextChat ──────────────────────────────────────────────────────────
+
+std::shared_ptr<TextMessage> ServerSessionManager::send_text_message(uint32_t sender_id, const std::string& sender_name,
+                                                                      const std::string& content,
+                                                                      bool is_private, uint32_t target_id,
+                                                                      uint32_t channel_id) {
+  return text_chat_.send_message(sender_id, sender_name, content, is_private, target_id, channel_id);
+}
+
+std::vector<std::shared_ptr<TextMessage>> ServerSessionManager::get_channel_messages(uint32_t channel_id, int limit) const {
+  return text_chat_.get_channel_messages(channel_id, limit);
+}
+
+std::vector<std::shared_ptr<TextMessage>> ServerSessionManager::get_private_messages(uint32_t user_id, int limit) const {
+  return text_chat_.get_private_messages(user_id, limit);
+}
+
+bool ServerSessionManager::delete_text_message(uint32_t message_id) {
+  return text_chat_.delete_message(message_id);
+}
+
 } // namespace hh::server
