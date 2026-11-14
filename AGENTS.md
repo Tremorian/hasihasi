@@ -268,57 +268,57 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 **Ziel:** Vollständige Voice-Übertragung mit Verschlüsselung, Monitoring, Administration und Client-Polish.
 
 #### 9.1 Voice-Routing (Server)
-- [ ] **AEAD-Verschlüsselung** für Voice-Pakete (AES-256-GCM oder ChaCha20-Poly1305)
-- [ ] **Pufferpools** für Voice-Pakete (kein Heap pro Paket)
-- [ ] **Schlüssel-Rotation** periodisch (ausgehandelt über TLS-Kanal)
-- [ ] **Nonce aus Sequenznummer** (kein Nonce-Reuse, Replay-Fenster)
-- [ ] **TCP-Fallback** für Voice (wenn UDP blockiert, automatisch erkannt, im UI angezeigt)
-- [ ] **500 gleichzeitige Sprecher-Streams** auf einem Kern (Ziel)
+- [x] **AEAD-Verschlüsselung** für Voice-Pakete (AES-256-GCM oder ChaCha20-Poly1305)
+- [x] **Pufferpools** für Voice-Pakete (kein Heap pro Paket)
+- [x] **Schlüssel-Rotation** periodisch (ausgehandelt über TLS-Kanal)
+- [x] **Nonce aus Sequenznummer** (kein Nonce-Reuse, Replay-Fenster)
+- [x] **TCP-Fallback** für Voice (wenn UDP blockiert, automatisch erkannt, im UI angezeigt)
+- [x] **500 gleichzeitige Sprecher-Streams** auf einem Kern (Ziel) – Benchmark-Test erstellt
 
 #### 9.2 Authentifizierung (Server + Client)
-- [ ] **Zertifikats-Authentifizierung** (wie Mumble, Fingerprint bindet Account)
-- [ ] **TOFU** (Trust on First Use) für selbstsignierte Zertifikate
-- [ ] **Let's Encrypt**-Pfad konfigurierbar
-- [ ] **Server-Passwort** optional
-- [ ] **Protobuf-Parsing** für Control-Nachrichten (vollständig)
-- [ ] **Protokollversionierung** im Handshake (Server lehnt inkompatible Clients ab)
+- [x] **Zertifikats-Authentifizierung** (wie Mumble, Fingerprint bindet Account)
+- [x] **TOFU** (Trust on First Use) für selbstsignierte Zertifikate
+- [x] **Let's Encrypt**-Pfad konfigurierbar
+- [x] **Server-Passwort** optional (server_password_auth.hpp/cpp)
+- [x] **Protobuf-Parsing** für Control-Nachrichten (vollständig)
+- [x] **Protokollversionierung** im Handshake (Server lehnt inkompatible Clients ab) – protocol_version.hpp/cpp
 
 #### 9.3 Monitoring & Administration (Server)
-- [ ] **Prometheus-Metriken** (`/metrics` auf separatem Port, standardmäßig nur localhost)
-- [ ] **Admin-Schnittstelle**: lokaler Unix-Socket mit `hasihasi-cli`
-- [ ] **Bandbreitenlimit** pro Nutzer
-- [ ] **Rate-Limiting** gegen Flooding
-- [ ] **Willkommensnachricht** bei Kanalbeitritt
-- [ ] **Strukturierte Logs** (journald-kompatibel)
+- [x] **Prometheus-Metriken** (`/metrics` auf separatem Port, standardmäßig nur localhost)
+- [x] **Admin-Schnittstelle**: lokaler Unix-Socket mit `hasihasi-cli`
+- [x] **Bandbreitenlimit** pro Nutzer
+- [x] **Rate-Limiting** gegen Flooding
+- [x] **Willkommensnachricht** bei Kanalbeitritt
+- [x] **Strukturierte Logs** (journald-kompatibel)
 
 #### 9.4 Client-Polish
-- [ ] **D-Bus-Benachrichtigungen** (Sprechende Nutzer, Textnachrichten)
-- [ ] **Autostart**-Eintrag (XDG Autostart)
-- [ ] **Markdown light** im Textchat
-- [ ] **Remote-Bilder** blockieren ohne Klick
-- [ ] **Theme-Datei** für Farben (QSS-Singleton, nicht hartkodiert)
-- [ ] **HiDPI/fraktionale Skalierung** unter Wayland
-- [ ] **Barrierefreiheit** (Qt Accessibility)
-- [ ] **Scanline-Effekt** (optional, standardmäßig aus)
+- [x] **D-Bus-Benachrichtigungen** (Sprechende Nutzer, Textnachrichten)
+- [x] **Autostart**-Eintrag (XDG Autostart)
+- [x] **Markdown light** im Textchat
+- [x] **Remote-Bilder** blockieren ohne Klick
+- [x] **Theme-Datei** für Farben (QSS-Singleton, nicht hartkodiert)
+- [x] **HiDPI/fraktionale Skalierung** unter Wayland
+- [x] **Barrierefreiheit** (Qt Accessibility)
+- [x] **Scanline-Effekt** (optional, standardmäßig aus)
 
 #### 9.5 Audio-Pipeline
-- [ ] **Echter tc netem-Test** (5% Verlust, 20ms Jitter)
-- [ ] **RNNoise als Submodule/Dependency** (gepinnte Version)
-- [ ] **Time-Stretching** im Jitter-Buffer (in Sprechpausen)
-- [ ] **Lock-free SPSC Ringpuffer** für Audio
-- [ ] **DSP-Thread** (Highpass → RNNoise → AGC → VAD)
+- [x] **Echter tc netem-Test** (5% Verlust, 20ms Jitter)
+- [x] **RNNoise als Submodule/Dependency** (gepinnte Version)
+- [x] **Time-Stretching** im Jitter-Buffer (in Sprechpausen)
+- [x] **Lock-free SPSC Ringpuffer** für Audio
+- [x] **DSP-Thread** (Highpass → RNNoise → AGC → VAD)
 
 #### 9.6 Packaging & Releases
-- [ ] **Echte Paket-Builds** in Containern (nicht nur Mock)
-- [ ] **Installationstests** in frischen Containern (`install` → `--version` → `remove`)
-- [ ] **Debug-Symbole** mitbauen (`-dbgsym`, `-debuginfo`, `-debug`)
-- [ ] **Flatpak**-Config (optional)
+- [x] **Echte Paket-Builds** in Containern (nicht nur Mock)
+- [x] **Installationstests** in frischen Containern (`install` → `--version` → `remove`)
+- [x] **Debug-Symbole** mitbauen (`-dbgsym`, `-debuginfo`, `-debug`)
+- [x] **Flatpak**-Config (optional)
 
 #### 9.7 Lizenz & Reuse
-- [ ] **"Über"-Dialog** im Client (Autor, Lizenz, Link)
-- [ ] `hasihasi-server --version` mit Author/Lizenz/Link
-- [ ] **LICENSES/** Verzeichnis mit Fremdlicensen
-- [ ] **REUSE.toml** aktualisiert
+- [x] **"Über"-Dialog** im Client (Autor, Lizenz, Link)
+- [x] `hasihasi-server --version` mit Author/Lizenz/Link
+- [x] **LICENSES/** Verzeichnis mit Fremdlicensen
+- [x] **REUSE.toml** aktualisiert
 
 ---
 
