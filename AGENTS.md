@@ -259,6 +259,7 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 | M10 | Reconnect-Manager, Positional Audio, Zwei-Client-Echt-Test, Lock-free SPSC Ringpuffer, Markdown light, Barrierefreiheit, DSP-Thread, tc netem-Test, Time-Stretching, RNNoise-Submodule, Paket-Builds, Debug-Symbole, Remote-Bilder blockieren | Vollständige Client/Server-Fertigstellung mit allen Features |
 | M10.5 | Multi-Language-Unterstützung (Deutsch, Englisch, Französisch, Spanisch) | Vollständige Internationalisierung (i18n) mit Qt Linguist |
 | M11 | Server-Cluster, WebSocket-Support, Mobile-Client (Qt Quick), Sprachassistent, Integration (Discord/Teams), Performance-Optimierung, Security-Hardening | Multi-Server-Betrieb, Cross-Platform, Third-Party-Integration |
+| M12 | Mobile-Client (Qt Quick), Sprachassistent (Voice Commands), Datei-Share, Screenshare, Monitoring & Alerting, Erweiterte Server-Features | Vollständige Cross-Platform-Abdeckung, Erweiterte Kollaborations-Features |
 
 ---
 
@@ -429,6 +430,74 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [ ] **Penetration-Testing**: Regelmäßige Security-Reviews
 - [ ] **Security Advisories**: GitHub Security Advisories
 - [ ] **Encryption-Update**: Post-Quantum-Kryptografie (optional)
+
+---
+
+### M12 – Detail-Spezifikation
+
+**Ziel:** Vollständige Cross-Platform-Abdeckung mit Mobile-Client, erweiterte Kollaborations-Features (Datei-Share, Screenshare), Sprachsteuerung und professionelles Monitoring.
+
+#### 12.1 Mobile-Client (Qt Quick)
+- [ ] **Qt Quick/UWP**: Mobile-optimierte UI mit QML
+- [ ] **Android-Support**: Build für Android (API 29+)
+- [ ] **iOS-Support**: Build für iOS (optional, Apple Developer Account erforderlich)
+- [ ] **Touch-Optimierung**: Große Buttons, Gesten (Swipe, Pinch-to-Zoom)
+- [ ] **Mobile-Audio**: Headset-Management, Background-Mode, Do-not-disturb
+- [ ] **Responsive Design**: Automatische Anpassung an Bildschirmgröße und -orientierung
+- [ ] **Offline-Mode**: Lokaler Cache für Nachrichten und Kanalstruktur
+- [ ] **Push-Benachrichtigungen**: Firebase Cloud Messaging (Android), APNs (iOS)
+- [ ] **Batterie-Optimierung**: Adaptive Frame-Rate, Hintergrund-Audio nur bei Bedarf
+
+#### 12.2 Sprachassistent (Voice Commands)
+- [ ] **Voice-Commands**: Sprachsteuerung über lokale STT (Speech-to-Text)
+- [ ] **Befehle**: "Stumm schalten", "Kanal wechseln", "Lautstärke erhöhen", "Verbinden trennen"
+- [ ] **Lokale Verarbeitung**: Keine Cloud-Abhängigkeit, alle Daten bleiben lokal
+- [ ] **Wake Word**: "Hey Hasi" (optional, konfigurierbar)
+- [ ] **STT-Engine**: Vosk oder Whisper.cpp (lokal, C++-Binding)
+- [ ] **TTS-Engine**: Text-to-Speech für Rückmeldungen (optional)
+- [ ] **Kommandos erweitern**: Plugin-Schnittstelle für benutzerdefinierte Befehle
+- [ ] **Spracherkennung**: Deutsch, Englisch, Französisch, Spanisch
+
+#### 12.3 Datei-Share
+- [ ] **Datei-Upload**: Bis 512 MB pro Datei (konfigurierbar)
+- [ ] **Datei-Download**: Mit Fortschrittsanzeige und Unterbrechungsmöglichkeit
+- [ ] **Datei-Verwaltung**: Liste hochgeladener Dateien pro Kanal
+- [ ] **Vorschau**: Bilder, Videos, Audio, PDF (nur lokal gerendert)
+- [ ] **Verschlüsselung**: Ende-zu-Ende-verschlüsselt (AES-256-GCM)
+- [ ] **Viren-Scan**: ClamAV-Integration auf Server-Seite (optional)
+- [ ] **Hash-Prüfung**: SHA-256-Integritätsprüfung für Downloads
+- [ ] **Bandbreitenlimit**: Pro Nutzer und global konfigurierbar
+
+#### 12.4 Screenshare
+- [ ] **Bildschirm-Erfassung**: X11 (XShm), Wayland (xdg-desktop-portal)
+- [ ] **Fenster-Erfassung**: Einzeln oder komplett
+- [ ] **Codec**: Opus für Audio, VP8/VP9/H.264 für Video (optional, je nach System)
+- [ ] **Qualität**: Adaptiv (automatische Anpassung an Netzwerkbedingungen)
+- [ ] **Framerate**: 15/30/60 fps (konfigurierbar)
+- [ ] **Auflösung**: Original, halbe, viertel Auflösung (automatisch adaptiv)
+- [ ] **Audio-Integration**: System-Audio und Mikrofon gleichzeitig
+- [ ] **Berechtigung**: Kanal-spezifisch, Sprecher muss Rechte haben
+- [ ] **Aufzeichnung**: Optionale lokale Aufzeichnung (MP4)
+
+#### 12.5 Monitoring & Alerting
+- [ ] **Prometheus-Erweiterung**: Erweiterte Metriken für Mobile, Datei-Share, Screenshare
+- [ ] **Grafana-Dashboards**: Vordefinierte Dashboards für Betrieb
+- [ ] **Alerting**: Benachrichtigungen bei kritischen Ereignissen (Email, Discord, Slack)
+- [ ] **Health-Checks**: Regelmäßige Server-Health-Prüfungen
+- [ ] **Log-Aggregation**: Journald-kompatibel, ELK-Stack-Integration (optional)
+- [ ] **Audit-Log**: Vollständige Protokollierung aller sicherheitsrelevanten Aktionen
+- [ ] **Performance-Monitoring**: Echtzeit-Metriken für Latenz, Verlust, CPU, Speicher
+- [ ] **Benutzer-Metriken**: Aktive Nutzer, Kanal-Nutzung, Chat-Aktivität
+
+#### 12.6 Erweiterte Server-Features
+- [ ] **Multi-Instance**: Mehrere HasiHasi-Server auf einer Maschine
+- [ ] **Database-Scaling**: PostgreSQL-Integration für große Installationen (>10.000 Nutzer)
+- [ ] **Load-Balancing**: HTTP-basiertes Load-Balancing für mehrere Server
+- [ ] **Geo-Replication**: Synchronisation zwischen Standorten (optional)
+- [ ] **Auto-Scaling**: Automatische Ressourcen-Anpassung (Kubernetes-Integration)
+- [ ] **Backup/Restore**: Automatisierte Backups der Datenbank und Konfiguration
+- [ ] **Migration-Tools**: Migration von Mumble/Murmur, Discord, Teams
+- [ ] **API-Gateway**: REST/GraphQL-Schnittstelle für Third-Party-Integration
 
 ---
 
