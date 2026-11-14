@@ -23,6 +23,7 @@ add_library(hh_server_lib
   server_i18n.cpp
   server_cluster.cpp
   server_discovery.cpp
+  load_balancer.cpp
 )
 
 target_include_directories(hh_server_lib
