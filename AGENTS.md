@@ -442,11 +442,11 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Android-Support**: Build für Android (API 29+) – `android/AndroidManifest.xml.in`, CMake-Config
 - [x] **iOS-Support**: Build für iOS (optional) – `ios/Info.plist.in`, CMake-Config
 - [x] **Touch-Optimierung**: Große Buttons, Gesten (Swipe, Pinch-to-Zoom) – `ServerDelegate.qml`, `ChannelDelegate.qml`
-- [ ] **Mobile-Audio**: Headset-Management, Background-Mode, Do-not-disturb
+- [x] **Mobile-Audio**: Headset-Management, Background-Mode, Do-not-disturb – `mobile_audio_manager.hpp/cpp`
 - [x] **Responsive Design**: Automatische Anpassung an Bildschirmgröße und -orientierung – `Main.qml` (scale, isLargeScreen)
-- [ ] **Offline-Mode**: Lokaler Cache für Nachrichten und Kanalstruktur
+- [x] **Offline-Mode**: Lokaler Cache für Nachrichten und Kanalstruktur – `offline_cache.hpp/cpp`
 - [x] **Push-Benachrichtigungen**: Firebase Cloud Messaging (Android), APNs (iOS) – `push_notification_manager.hpp/cpp`
-- [ ] **Batterie-Optimierung**: Adaptive Frame-Rate, Hintergrund-Audio nur bei Bedarf
+- [x] **Batterie-Optimierung**: Adaptive Frame-Rate, Hintergrund-Audio nur bei Bedarf – `battery_optimizer.hpp/cpp`
 
 #### 12.2 Sprachassistent (Voice Commands)
 - [ ] **Voice-Commands**: Sprachsteuerung über lokale STT (Speech-to-Text)

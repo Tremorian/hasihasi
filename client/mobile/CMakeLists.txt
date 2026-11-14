@@ -6,6 +6,9 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Network)
 # Mobile-Client Bibliothek (für Tests)
 add_library(hh_mobile_lib
   src/push_notification_manager.cpp
+  src/mobile_audio_manager.cpp
+  src/offline_cache.cpp
+  src/battery_optimizer.cpp
 )
 
 target_include_directories(hh_mobile_lib

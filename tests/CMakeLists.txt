@@ -46,6 +46,9 @@ add_executable(unit_tests
   test_image_manager.cpp
   test_i18n_manager.cpp
   test_push_notification.cpp
+  test_mobile_audio.cpp
+  test_offline_cache.cpp
+  test_battery_optimizer.cpp
 )
 
 target_link_libraries(unit_tests
