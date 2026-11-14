@@ -31,6 +31,7 @@ add_executable(unit_tests
   test_logging.cpp
   test_dbus.cpp
   test_autostart.cpp
+  test_theme.cpp
 )
 
 target_link_libraries(unit_tests

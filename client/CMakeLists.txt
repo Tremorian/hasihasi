@@ -20,6 +20,7 @@ add_library(client_core
   src/positional_audio_plugin.cpp
   src/dbus_interface.cpp
   src/autostart_manager.cpp
+  src/theme_manager.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)
