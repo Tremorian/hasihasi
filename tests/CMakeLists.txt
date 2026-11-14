@@ -32,6 +32,7 @@ add_executable(unit_tests
   test_dbus.cpp
   test_autostart.cpp
   test_theme.cpp
+  test_hidpi.cpp
 )
 
 target_link_libraries(unit_tests
