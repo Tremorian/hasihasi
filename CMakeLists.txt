@@ -8,7 +8,7 @@ project(hasihasi
   VERSION 0.1.0
   DESCRIPTION "Low-Latency-Voice-Chat für Linux-Gamer"
   HOMEPAGE_URL "https://hasihasi.de"
-  LANGUAGES CXX
+  LANGUAGES CXX C
 )
 
 # ── Global-Einstellungen ──────────────────────────────────────────────
@@ -39,8 +39,13 @@ option(HASIHASI_BUILD_TRANSLATIONS "Baut Translation-Files" ON)
 find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(spdlog REQUIRED)
-find_package(asio REQUIRED)
-find_package(tomlplusplus REQUIRED)
+
+# Asio als Header-only Bibliothek (lokal)
+add_subdirectory(libs/asio-standalone)
+
+# tomlplusplus als Header-only Bibliothek (lokal)
+add_subdirectory(libs/tomlplusplus)
+
 if(OPENSSL_FOUND)
   set(OPENSSL_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
 endif()

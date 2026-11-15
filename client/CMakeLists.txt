@@ -8,26 +8,26 @@ qt_standard_project_setup()
 # ── Client Core (ohne Qt) ─────────────────────────────────────────────
 
 add_library(client_core
-  src/session.cpp
-  src/voice_pipeline.cpp
-  src/latency_test.cpp
-  src/global_hotkey_manager.cpp
-  src/system_tray.cpp
-  src/audio_assistant.cpp
-  src/server_list.cpp
-  src/echo_cancellation.cpp
-  src/game_overlay.cpp
-  src/positional_audio_plugin.cpp
-  src/dbus_interface.cpp
-  src/autostart_manager.cpp
-  src/theme_manager.cpp
-  src/hidpi_manager.cpp
-  src/markdown_light.cpp
-  src/accessibility.cpp
-  src/dsp_thread.cpp
-  src/tc_netem_test.cpp
-  src/image_manager.cpp
-  src/i18n_manager.cpp
+  core/src/session.cpp
+  core/src/voice_pipeline.cpp
+  core/src/latency_test.cpp
+  core/src/global_hotkey_manager.cpp
+  core/src/system_tray.cpp
+  core/src/audio_assistant.cpp
+  core/src/server_list.cpp
+  core/src/echo_cancellation.cpp
+  core/src/game_overlay.cpp
+  core/src/positional_audio_plugin.cpp
+  core/src/dbus_interface.cpp
+  core/src/autostart_manager.cpp
+  core/src/theme_manager.cpp
+  core/src/hidpi_manager.cpp
+  core/src/markdown_light.cpp
+  core/src/accessibility.cpp
+  core/src/dsp_thread.cpp
+  core/src/tc_netem_test.cpp
+  core/src/image_manager.cpp
+  core/src/i18n_manager.cpp
 )
 
 add_library(client_core::client_core ALIAS client_core)

@@ -19,7 +19,7 @@ target_link_libraries(hh_net
     hh_proto::hh_proto
     asio::asio
   PRIVATE
-    OpenSSL::TLS
+    ${OPENSSL_LIBRARIES}
     Threads::Threads
 )
 

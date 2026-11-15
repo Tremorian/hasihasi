@@ -13,7 +13,7 @@ void FrameBuilder::set_type(uint16_t type) {
 }
 
 void FrameBuilder::set_payload(std::span<const uint8_t> payload) {
-  payload_ = payload.begin(), payload.end();
+  payload_.assign(payload.begin(), payload.end());
 }
 
 std::vector<uint8_t> FrameBuilder::build() const {

@@ -68,4 +68,8 @@ target_link_libraries(unit_tests
 
 target_compile_features(unit_tests PRIVATE cxx_std_20)
 
-catch_discover_tests(unit_tests)
+add_test(NAME unit_tests COMMAND unit_tests)
+set_tests_properties(unit_tests PROPERTIES
+  TIMEOUT 300
+  LABELS "unit"
+)

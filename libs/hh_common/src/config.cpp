@@ -15,8 +15,13 @@ Config::Config(const std::string& path)
 void Config::load() {
   auto parsed = toml::parse(path_);
 
-  for (auto& key : parsed) {
-    values_[key.name()] = key.value_or<std::string>("");
+  for (auto& [k, v] : parsed) {
+    if (v.is_string()) {
+      const toml::value<std::string>* str_val = v.as_string();
+      if (str_val) {
+        values_[std::string(k)] = std::string(*str_val);
+      }
+    }
   }
 }
 

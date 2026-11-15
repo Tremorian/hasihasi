@@ -86,26 +86,29 @@ inline void init_logging(const std::string& log_file, bool console = true, bool 
   // Console-Sink
   if (console) {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    spdlog::stdout_logger_mt("console") = console_sink;
-    spdlog::register_logger(spdlog::stdout_logger_mt("console"));
+    auto console_logger = std::make_shared<spdlog::logger>("console", console_sink);
+    spdlog::register_logger(console_logger);
   }
 
   // File-Sink
   if (!log_file.empty()) {
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(log_file, true);
-    spdlog::create<spdlog::sinks::basic_file_sink_mt>("file", log_file);
-    spdlog::register_logger(spdlog::get("file"));
+    auto file_logger = std::make_shared<spdlog::logger>("file", file_sink);
+    spdlog::register_logger(file_logger);
   }
 
   // journald-Sink
   if (journald) {
     auto journald_sink_ptr = std::make_shared<journald_sink>("hasihasi-server");
-    spdlog::create<journald_sink>("journald", "hasihasi-server");
-    spdlog::register_logger(spdlog::get("journald"));
+    auto journald_logger = std::make_shared<spdlog::logger>("journald", journald_sink_ptr);
+    spdlog::register_logger(journald_logger);
   }
 
   // Default-Logger setzen
-  spdlog::set_default_logger(spdlog::stdout_logger_mt("console"));
+  auto default_logger = spdlog::get("console");
+  if (default_logger) {
+    spdlog::set_default_logger(default_logger);
+  }
 }
 
 // Logger mit journald-Unterstützung
