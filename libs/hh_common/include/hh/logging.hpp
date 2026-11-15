@@ -8,6 +8,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/sink.h>
 #include <spdlog/pattern_formatter.h>
+#include <syslog.h>
 
 #include <string>
 #include <memory>
@@ -57,9 +58,9 @@ protected:
     // Nachricht formatieren
     std::string formatted_message;
     if (msg.logger_name != nullptr) {
-      formatted_message = "[" + std::string(msg.logger_name) + "] " + spdlog::format_to_string(msg);
+      formatted_message = "[" + std::string(msg.logger_name) + "] " + msg.payload;
     } else {
-      formatted_message = spdlog::format_to_string(msg);
+      formatted_message = msg.payload;
     }
 
     // Nach journald senden
