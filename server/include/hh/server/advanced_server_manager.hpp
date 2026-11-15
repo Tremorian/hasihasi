@@ -141,6 +141,79 @@ public:
   ServerConfig get_config() const;
   bool set_config(const ServerConfig& config);
 
+  // Auto-Scaling
+  enum class ScalingPolicy {
+    FIXED,
+    AUTOMATIC,
+    MANUAL
+  };
+  Q_ENUM(ScalingPolicy)
+
+  ScalingPolicy scaling_policy() const;
+  bool set_scaling_policy(ScalingPolicy policy);
+  
+  struct ScalingMetrics {
+    double cpu_usage_percent;
+    double memory_usage_percent;
+    int active_connections;
+    int active_instances;
+    int recommended_instances;
+    qint64 network_bandwidth_mbps;
+  };
+
+  ScalingMetrics get_scaling_metrics() const;
+  bool scale_instances(int target_count);
+  int current_instance_count() const;
+  int recommended_instance_count() const;
+
+  // Backup/Restore
+  enum class BackupStatus {
+    IDLE,
+    BACKING_UP,
+    COMPLETED,
+    FAILED,
+    ERROR
+  };
+  Q_ENUM(BackupStatus)
+
+  BackupStatus backup_status() const;
+  struct BackupInfo {
+    QString id;
+    QString path;
+    qint64 size_bytes;
+    QDateTime created_at;
+    bool is_valid;
+  };
+
+  bool create_backup(const QString& path);
+  bool restore_backup(const QString& path);
+  bool delete_backup(const QString& id);
+  std::vector<BackupInfo> get_backups() const;
+  BackupInfo* get_backup(const QString& id);
+  const BackupInfo* get_backup(const QString& id) const;
+
+  // API-Gateway
+  enum class APIEndpoint {
+    REST,
+    GRAPHQL,
+    WebSocket
+  };
+  Q_ENUM(APIEndpoint)
+
+  struct APIEndpointConfig {
+    QString path;
+    APIEndpoint type;
+    bool is_enabled;
+    int rate_limit_per_minute;
+    QString auth_method; // none, token, jwt, oauth
+  };
+
+  bool add_api_endpoint(const APIEndpointConfig& config);
+  bool remove_api_endpoint(const QString& path);
+  std::vector<APIEndpointConfig> get_api_endpoints() const;
+  APIEndpointConfig* get_api_endpoint(const QString& path);
+  const APIEndpointConfig* get_api_endpoint(const QString& path) const;
+
   // Statistik
   struct Stats {
     size_t instances_started;
@@ -205,6 +278,18 @@ private:
   
   // Konfiguration
   ServerConfig config_;
+  
+  // Auto-Scaling
+  ScalingPolicy scaling_policy_ = ScalingPolicy::FIXED;
+  ScalingMetrics scaling_metrics_;
+  
+  // Backup/Restore
+  BackupStatus backup_status_ = BackupStatus::IDLE;
+  std::vector<BackupInfo> backups_;
+  QString current_backup_id_;
+  
+  // API-Gateway
+  std::vector<APIEndpointConfig> api_endpoints_;
   
   // Statistik
   Stats stats_;

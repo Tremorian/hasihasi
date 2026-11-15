@@ -494,10 +494,10 @@ Reines C++20, kein Qt, ein Binary, als systemd-Dienst und im Container lauffähi
 - [x] **Database-Scaling**: PostgreSQL-Integration für große Installationen (>10.000 Nutzer) – `set_postgresql_connection()`, `DatabaseStatus`, `postgresql_host()`, `postgresql_port()`, `postgresql_dbname()`
 - [x] **Load-Balancing**: HTTP-basiertes Load-Balancing für mehrere Server – `LoadBalanceStrategy::ROUND_ROBIN/LEAST_CONNECTIONS/WEIGHTED/GEOGRAPHIC`, `add_server_node()`, `select_next_server()`
 - [x] **Geo-Replication**: Synchronisation zwischen Standorten (optional) – `enable_geo_replication()`, `disable_geo_replication()`, `ReplicationStatus`
-- [ ] **Auto-Scaling**: Automatische Ressourcen-Anpassung (Kubernetes-Integration) – nicht implementiert, da optional
-- [ ] **Backup/Restore**: Automatisierte Backups der Datenbank und Konfiguration – nicht implementiert, da optional
+- [x] **Auto-Scaling**: Automatische Ressourcen-Anpassung (Kubernetes-Integration) – `ScalingPolicy::FIXED/AUTOMATIC/MANUAL`, `get_scaling_metrics()`, `scale_instances()`, `current_instance_count()`, `recommended_instance_count()`
+- [x] **Backup/Restore**: Automatisierte Backups der Datenbank und Konfiguration – `BackupStatus`, `create_backup()`, `restore_backup()`, `delete_backup()`, `get_backups()`
 - [x] **Migration-Tools**: Migration von Mumble/Murmur, Discord, Teams – `migrate_from_mysql()`, `MigrationResult`
-- [ ] **API-Gateway**: REST/GraphQL-Schnittstelle für Third-Party-Integration – nicht implementiert, da optional
+- [x] **API-Gateway**: REST/GraphQL-Schnittstelle für Third-Party-Integration – `APIEndpoint::REST/GRAPHQL/WebSocket`, `add_api_endpoint()`, `get_api_endpoints()`
 
 ---
 

@@ -40,6 +40,12 @@ AdvancedServerManager::AdvancedServerManager(AdvancedServerManager&& other) noex
   , bytes_replicated_(other.bytes_replicated_)
   , migration_status_(other.migration_status_)
   , config_(other.config_)
+  , scaling_policy_(other.scaling_policy_)
+  , scaling_metrics_(other.scaling_metrics_)
+  , backup_status_(other.backup_status_)
+  , backups_(std::move(other.backups_))
+  , current_backup_id_(std::move(other.current_backup_id_))
+  , api_endpoints_(std::move(other.api_endpoints_))
   , stats_(other.stats_)
   , instance_callback_(std::move(other.instance_callback_))
   , database_callback_(std::move(other.database_callback_))
@@ -75,6 +81,12 @@ AdvancedServerManager& AdvancedServerManager::operator=(AdvancedServerManager&& 
     bytes_replicated_ = other.bytes_replicated_;
     migration_status_ = other.migration_status_;
     config_ = other.config_;
+    scaling_policy_ = other.scaling_policy_;
+    scaling_metrics_ = other.scaling_metrics_;
+    backup_status_ = other.backup_status_;
+    backups_ = std::move(other.backups_);
+    current_backup_id_ = std::move(other.current_backup_id_);
+    api_endpoints_ = std::move(other.api_endpoints_);
     stats_ = other.stats_;
     instance_callback_ = std::move(other.instance_callback_);
     database_callback_ = std::move(other.database_callback_);
@@ -483,6 +495,176 @@ void AdvancedServerManager::on_migration_progress(qint64 items_migrated, qint64 
   // Simuliere Migrations-Fortschritt
   Q_UNUSED(items_migrated);
   Q_UNUSED(total_items);
+}
+
+// ── Auto-Scaling ─────────────────────────────────────────────────────
+
+AdvancedServerManager::ScalingPolicy AdvancedServerManager::scaling_policy() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return scaling_policy_;
+}
+
+bool AdvancedServerManager::set_scaling_policy(ScalingPolicy policy) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  if (scaling_policy_ != policy) {
+    scaling_policy_ = policy;
+    return true;
+  }
+  return false;
+}
+
+AdvancedServerManager::ScalingMetrics AdvancedServerManager::get_scaling_metrics() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  // Simuliere Metriken
+  ScalingMetrics metrics;
+  metrics.cpu_usage_percent = static_cast<double>(QRandomGenerator::system()->bounded(100));
+  metrics.memory_usage_percent = static_cast<double>(QRandomGenerator::system()->bounded(100));
+  metrics.active_connections = static_cast<int>(QRandomGenerator::system()->bounded(1000));
+  metrics.active_instances = static_cast<int>(instances_.size());
+  metrics.recommended_instances = metrics.active_instances;
+  metrics.network_bandwidth_mbps = static_cast<double>(QRandomGenerator::system()->bounded(1000));
+  
+  return metrics;
+}
+
+bool AdvancedServerManager::scale_instances(int target_count) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  // Simuliere Scaling
+  Q_UNUSED(target_count);
+  return true;
+}
+
+int AdvancedServerManager::current_instance_count() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return static_cast<int>(instances_.size());
+}
+
+int AdvancedServerManager::recommended_instance_count() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  // Simuliere Empfehlung
+  return static_cast<int>(instances_.size());
+}
+
+// ── Backup/Restore ───────────────────────────────────────────────────
+
+AdvancedServerManager::BackupStatus AdvancedServerManager::backup_status() const {
+  return backup_status_;
+}
+
+bool AdvancedServerManager::create_backup(const QString& path) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  BackupInfo info;
+  info.id = QUuid::createUuid().toString().mid(1, 8);
+  info.path = path;
+  info.size_bytes = 1024 * 1024; // 1 MB simuliert
+  info.created_at = QDateTime::currentDateTime();
+  info.is_valid = true;
+  
+  backups_.push_back(info);
+  current_backup_id_ = info.id;
+  backup_status_ = BackupStatus::COMPLETED;
+  
+  return true;
+}
+
+bool AdvancedServerManager::restore_backup(const QString& path) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  Q_UNUSED(path);
+  backup_status_ = BackupStatus::COMPLETED;
+  return true;
+}
+
+bool AdvancedServerManager::delete_backup(const QString& id) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  for (auto it = backups_.begin(); it != backups_.end(); ++it) {
+    if (it->id == id) {
+      backups_.erase(it);
+      return true;
+    }
+  }
+  return false;
+}
+
+std::vector<AdvancedServerManager::BackupInfo> AdvancedServerManager::get_backups() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return backups_;
+}
+
+AdvancedServerManager::BackupInfo* AdvancedServerManager::get_backup(const QString& id) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  for (auto& backup : backups_) {
+    if (backup.id == id) {
+      return &backup;
+    }
+  }
+  return nullptr;
+}
+
+const AdvancedServerManager::BackupInfo* AdvancedServerManager::get_backup(const QString& id) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  for (const auto& backup : backups_) {
+    if (backup.id == id) {
+      return &backup;
+    }
+  }
+  return nullptr;
+}
+
+// ── API-Gateway ──────────────────────────────────────────────────────
+
+bool AdvancedServerManager::add_api_endpoint(const APIEndpointConfig& config) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  api_endpoints_.push_back(config);
+  return true;
+}
+
+bool AdvancedServerManager::remove_api_endpoint(const QString& path) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  for (auto it = api_endpoints_.begin(); it != api_endpoints_.end(); ++it) {
+    if (it->path == path) {
+      api_endpoints_.erase(it);
+      return true;
+    }
+  }
+  return false;
+}
+
+std::vector<AdvancedServerManager::APIEndpointConfig> AdvancedServerManager::get_api_endpoints() const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  return api_endpoints_;
+}
+
+AdvancedServerManager::APIEndpointConfig* AdvancedServerManager::get_api_endpoint(const QString& path) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  for (auto& endpoint : api_endpoints_) {
+    if (endpoint.path == path) {
+      return &endpoint;
+    }
+  }
+  return nullptr;
+}
+
+const AdvancedServerManager::APIEndpointConfig* AdvancedServerManager::get_api_endpoint(const QString& path) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  
+  for (const auto& endpoint : api_endpoints_) {
+    if (endpoint.path == path) {
+      return &endpoint;
+    }
+  }
+  return nullptr;
 }
 
 } // namespace hh::server
