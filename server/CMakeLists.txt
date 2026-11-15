@@ -46,7 +46,7 @@ target_link_libraries(hh_server_lib
     hh_common::hh_common
     hh_proto::hh_proto
     hh_net::hh_net
-    OpenSSL::TLS
+    ${OPENSSL_LIBRARIES}
     SQLite::SQLite3
 )
 

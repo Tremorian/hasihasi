@@ -45,7 +45,7 @@ target_link_libraries(hasihasi-cli-test
   PRIVATE
     hh_common::hh_common
     hh_proto::hh_proto
-    OpenSSL::TLS
+    ${OPENSSL_LIBRARIES}
 )
 
 target_compile_features(hasihasi-cli-test PRIVATE cxx_std_20)

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 # RNNoise als Submodule
-add_subdirectory(${CMAKE_SOURCE_DIR}/libs/rnnoise)
+add_subdirectory(${CMAKE_SOURCE_DIR}/libs/rnnoise rnnoise_build)
 
 add_library(hh_audio
   src/buffers.cpp

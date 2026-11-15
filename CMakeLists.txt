@@ -20,7 +20,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
 
 # Debug-Symbole immer mitbauen (für Profiling/Debugging)
-set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE CACHE STRING "Build type" FORCE)
+set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "Build type" FORCE)
 if(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "Release")
   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Build type" FORCE)
 endif()
@@ -37,6 +37,13 @@ option(HASIHASI_BUILD_TRANSLATIONS "Baut Translation-Files" ON)
 
 # ── Abhängigkeiten (systemweit) ───────────────────────────────────────
 find_package(Threads REQUIRED)
+find_package(OpenSSL REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(asio REQUIRED)
+find_package(tomlplusplus REQUIRED)
+if(OPENSSL_FOUND)
+  set(OPENSSL_LIBRARIES ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
+endif()
 
 # ── Translation-Files (Qt Linguist) ─────────────────────────────────
 if(HASIHASI_BUILD_TRANSLATIONS)
